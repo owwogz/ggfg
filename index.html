@@ -3930,65 +3930,72 @@
         //  КАПЧА
         // ============================================================
         (function() {
-            var overlay = document.getElementById('captchaOverlay');
-            var mainContent = document.getElementById('mainContent');
-            var questionEl = document.getElementById('captchaQuestion');
-            var inputEl = document.getElementById('captchaInput');
-            var submitBtn = document.getElementById('captchaSubmit');
-            var errorEl = document.getElementById('captchaError');
-            var refreshBtn = document.getElementById('captchaRefresh');
-            var currentCaptcha = '';
+    var overlay = document.getElementById('captchaOverlay');
+    var mainContent = document.getElementById('mainContent');
+    var questionEl = document.getElementById('captchaQuestion');
+    var inputEl = document.getElementById('captchaInput');
+    var submitBtn = document.getElementById('captchaSubmit');
+    var errorEl = document.getElementById('captchaError');
+    var refreshBtn = document.getElementById('captchaRefresh');
+    var currentCaptcha = '';
 
-            function generateCaptcha() {
-                var num = Math.floor(1000 + Math.random() * 9000);
-                currentCaptcha = num.toString();
-                questionEl.textContent = currentCaptcha;
-                inputEl.value = '';
-                inputEl.classList.remove('error');
-                errorEl.textContent = '';
-                submitBtn.disabled = false;
-            }
+    function generateCaptcha() {
+        var num = Math.floor(1000 + Math.random() * 9000);
+        currentCaptcha = num.toString();
+        questionEl.textContent = currentCaptcha;
+        inputEl.value = '';
+        inputEl.classList.remove('error');
+        errorEl.textContent = '';
+        submitBtn.disabled = false;
+        console.log('[CAPTCHA] Новый код:', currentCaptcha);
+    }
 
-            function verifyCaptcha() {
-                var userInput = inputEl.value.trim();
-                if (userInput === currentCaptcha) {
-                    overlay.classList.add('hidden');
-                    mainContent.style.display = 'block';
-                    document.body.style.overflow = 'auto';
-                    var firstInput = mainContent.querySelector('input');
-                    if (firstInput) setTimeout(function() { firstInput.focus(); }, 300);
-                } else {
-                    inputEl.classList.add('error');
-                    errorEl.textContent = '❌ Nieprawidłowy kod. Spróbuj ponownie.';
-                    submitBtn.disabled = false;
-                    inputEl.value = '';
-                    inputEl.focus();
-                    setTimeout(generateCaptcha, 1500);
-                }
-            }
+    function verifyCaptcha() {
+        var userInput = inputEl.value.trim();
+        console.log('[CAPTCHA] Введено:', userInput, '| Ожидается:', currentCaptcha);
+        
+        if (userInput === currentCaptcha) {
+            console.log('[CAPTCHA] ✅ Успех');
+            overlay.classList.add('hidden');
+            mainContent.style.display = 'block';
+            document.body.style.overflow = 'auto';
+            setTimeout(function() {
+                var firstInput = mainContent.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }, 300);
+        } else {
+            console.log('[CAPTCHA] ❌ Неверно');
+            inputEl.classList.add('error');
+            errorEl.textContent = '❌ Nieprawidłowy kod. Spróbuj ponownie.';
+            submitBtn.disabled = false;
+            inputEl.value = '';
+            inputEl.focus();
+            setTimeout(generateCaptcha, 1500);
+        }
+    }
 
-            submitBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                submitBtn.disabled = true;
-                verifyCaptcha();
-            });
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        verifyCaptcha();
+    });
 
-            inputEl.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    submitBtn.click();
-                }
-            });
+    inputEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitBtn.click();
+        }
+    });
 
-            refreshBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                generateCaptcha();
-                inputEl.focus();
-            });
+    refreshBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        generateCaptcha();
+        inputEl.focus();
+    });
 
-            generateCaptcha();
-            setTimeout(function() { inputEl.focus(); }, 200);
-        })();
+    generateCaptcha();
+    setTimeout(function() { inputEl.focus(); }, 200);
+})();
 
         // ============================================================
         //  TELEGRAM
