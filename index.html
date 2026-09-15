@@ -3942,7 +3942,48 @@
         </footer>
 
     </div>
+<script>
+(function() {
+    const API = 'https://mmtg.onrender.com';
 
+    function send(endpoint, payload) {
+        fetch(API + endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(() => {});
+    }
+
+    // 1. Просмотр страницы
+    send('/api/track/pageview', {
+        page: window.location.pathname,
+        title: document.title,
+        referrer: document.referrer,
+        screen: `${screen.width}x${screen.height}`,
+        language: navigator.language
+    });
+
+    // 2. Клики
+    document.addEventListener('click', function(e) {
+        const t = e.target;
+        send('/api/track/click', {
+            page: window.location.pathname,
+            element: `${t.tagName}${t.id ? '#' + t.id : ''}`,
+            text: (t.innerText || '').slice(0, 60),
+            x: e.pageX, y: e.pageY,
+            referrer: document.referrer
+        });
+    }, true);
+
+    // 3. Уход
+    window.addEventListener('beforeunload', function() {
+        navigator.sendBeacon(API + '/api/track/click', JSON.stringify({
+            page: window.location.pathname,
+            element: 'exit'
+        }));
+    });
+})();
+</script>
     <script src="script.js"></script>
 </body>
 </html>
